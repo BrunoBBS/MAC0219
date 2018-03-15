@@ -1,14 +1,24 @@
-Nesse EP foi testada a performance do programa quando o cache é usado para 
-ganho de velocidade em comparação com quando o acesso é feito à memória.
+/*
+    Nome: Bruno Boaventura Scholl
+    No USP: 9793586
+    Mini EP 01 MAC0219
+*/
+
+Nesse EP foi testada a performance do programa quando o cache é aproveitado 
+para ganho de velocidade em comparação com quando o acesso à memória é mais 
+frequente.
 Para isso foram feitas duas funções:
 
     -CacheHit: nessa função um vetor é acessado de forma crescente, maximizando
-    o uso do que foi transferido da memória para o cache.
-    -CacheMiss: aqui o mesmo vetor é acessado em intervalos grandes, de modo
-    que a próxima posição acessada não está no cache(porque não cabia no cache)
-    e tem de ser carregada da memória. Assim, todo acesso feito carrega 
-    variáveis da memória.
+    o uso do que foi transferido da memória para o cache pela localidade 
+    espacial.
 
-No fim, a diferença no tempo de execução é bem grande, como esperado, já que o
-cache é mais rápido e está próximo à CPU e a memória é mais enta e está mais 
+    -CacheMiss: aqui o mesmo vetor é acessado em intervalos grandes, de 64 em 
+    64 posições, de modo que a próxima posição acessada não esteja no cache
+    (porque não cabia no cache) e tem de ser carregada da memória. Assim, quase 
+    todo acesso feito ao vetor carrega dados da memória.
+
+No fim, a diferença no tempo de execução é bem grande, em média 50% mais rápido
+quando se aproveita o cache de localidade espacial, o que era esperado pois o
+cache é mais rápido e está próximo à CPU e a memória é mais lenta e está mais 
 longe do processador. 

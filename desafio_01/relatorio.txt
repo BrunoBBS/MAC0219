@@ -1,12 +1,20 @@
-Este EP tenta mostrar a diferença entre o aproveitamento de "branch prediction"
+/*
+    Nome: Bruno Boaventura Scholl
+    No USP: 9793586
+    Mini Desafio 01 MAC0219
+*/
+
+Este EP tenta mostrar a ventagem do aproveitamento de "branch prediction"
 dos processadores modernos. 
 Para esse fim, foram desenvolvidas duas funções semelhantes:
 
     -branch_miss(): tem o objetivo de "enganar" o branch prediction com a 
-    mudança aleatória do caminho tomado em um if que roda repetidas vezes 
-    em um lasso;
-    -branch_hit(): tenta usar ao máximo o branch prediction tomando sempre
-    o mesmo caminho em um if que roda num lasso.
+    mudança aleatória do caminho tomado em um if-else que roda repetidas vezes 
+    em um laço for;
 
-Os resultados mostram uma grande diferença no tempo de execução, indicando
-a vantagem de se usar o branch prediction.
+    -branch_hit(): tenta usar ao máximo o branch prediction tomando sempre
+    o mesmo caminho em um if-else que roda num laço for.
+
+Os resultados mostram uma grande diferença no tempo de execução, cerca de 30%
+de aumento na velocidade quando se usa o branch prediction, indicando a
+vantagem de se usar o branch prediction.

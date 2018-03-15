@@ -1,3 +1,8 @@
+/*
+    Nome: Bruno Boaventura Scholl
+    No USP: 9793586
+    Mini Desafio 01 MAC0219
+*/
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
@@ -43,15 +48,15 @@ int main()
     branch_hit();
     end = clock();
 
-    time_diff_hit = (end - start) / (double)CLOCKS_PER_SEC;
-    printf("Time Hit: %.3lfs \n", time_diff_hit);
+    time_diff_hit = (end - start) * 1000 / (double)CLOCKS_PER_SEC;
+    printf("Time Hit: %.0lfms \n", time_diff_hit);
 
     start = clock();
     branch_miss();
     end = clock();
 
-    time_diff_miss = (end - start) / (double)CLOCKS_PER_SEC;
-    printf("Time Miss: %.3lfs\n", time_diff_miss);
+    time_diff_miss = (end - start) * 1000 / (double)CLOCKS_PER_SEC;
+    printf("Time Miss: %.0lfms\n", time_diff_miss);
 
     printf("Using branch prediction is %.2lf%% faster \n",
            (1 - time_diff_hit / time_diff_miss) * 100);
