@@ -3,10 +3,6 @@
     No USP: 9793586
     Mini EP 01 MAC0219
 */
-#include <algorithm>
-#include <cctype>
-#include <chrono>
-#include <iostream>
 #include <stdio.h>
 #include <time.h>
 #include <vector>
