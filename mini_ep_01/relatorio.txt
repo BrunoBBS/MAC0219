@@ -1,0 +1,14 @@
+Nesse EP foi testada a performance do programa quando o cache é usado para 
+ganho de velocidade em comparação com quando o acesso é feito à memória.
+Para isso foram feitas duas funções:
+
+    -CacheHit: nessa função um vetor é acessado de forma crescente, maximizando
+    o uso do que foi transferido da memória para o cache.
+    -CacheMiss: aqui o mesmo vetor é acessado em intervalos grandes, de modo
+    que a próxima posição acessada não está no cache(porque não cabia no cache)
+    e tem de ser carregada da memória. Assim, todo acesso feito carrega 
+    variáveis da memória.
+
+No fim, a diferença no tempo de execução é bem grande, como esperado, já que o
+cache é mais rápido e está próximo à CPU e a memória é mais enta e está mais 
+longe do processador. 
