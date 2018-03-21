@@ -1,3 +1,7 @@
+
+
+int stones;
+
 class Toad
 {
 };
