@@ -11,8 +11,8 @@
  */
 
 int cant_jump_counter;
-sem_t *stones_semaphore;
-pthread_barrier_t *start;
+sem_t stones_semaphore;
+pthread_barrier_t start;
 
 /**
  * Class representing a toad
@@ -59,6 +59,8 @@ void Toad::wait() { pthread_join(this->thread_handler, nullptr); }
 void *Toad::thread(void *instance)
 {
     Toad &toad = *((Toad *)instance);
+
+    pthread_barrier_wait(&start);
 
     for (int i = 0; i < 10; i++)
         printf("Yay %d\n", toad.position);
@@ -112,17 +114,17 @@ void *Frog::thread(void *frog_instance)
 {
     Frog *instance = (Frog *)frog_instance;
     // Waits the program to start
-    pthread_barrier_wait(start);
+    pthread_barrier_wait(&start);
 
     if (instance->can_jump()) {
-        sem_wait(stones_semaphore);
+        sem_wait(&stones_semaphore);
         if (instance->can_jump())
             instance->jump();
         else
             cant_jump_counter++;
         // TODO: There are two ways to detect a deadlock taht have to be
         // implmented
-        sem_post(stones_semaphore);
+        sem_post(&stones_semaphore);
     }
     else
         cant_jump_counter++;
@@ -138,11 +140,12 @@ bool Frog::can_jump() { return !stones[position + 1] || !stones[position + 2]; }
 
 void Frog::wait() { pthread_join(this->thread_handler, nullptr); }
 
-Toad *toad[500];
-
+/**
+ * Where the rest of the program lies
+ */
 int main(int argc, char *argv[])
 {
     cant_jump_counter = 0;
-    // Initialize the semaphre to atomize the frog jumps
-    sem_init(stones_semaphore, 0, 1);
+    // Initialize the semaphore to atomize the frog jumps
+    sem_init(&stones_semaphore, 0, 1);
 }
