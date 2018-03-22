@@ -139,18 +139,10 @@ bool Frog::can_jump() { return !stones[position + 1] || !stones[position + 2]; }
 void Frog::wait() { pthread_join(this->thread_handler, nullptr); }
 
 Toad *toad[500];
-void **stones[1000];
 
 int main(int argc, char *argv[])
 {
     cant_jump_counter = 0;
     // Initialize the semaphre to atomize the frog jumps
     sem_init(stones_semaphore, 0, 1);
-
-    for (int i = 0; i < 500; i++)
-        toad[i] = new Toad(i, nullptr);
-    for (int i = 0; i < 500; i++)
-        toad[i]->start_thread();
-    for (int i = 0; i < 500; i++)
-        toad[i]->wait();
 }
