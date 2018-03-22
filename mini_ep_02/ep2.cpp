@@ -39,6 +39,12 @@ class Toad
     // Starts thread to handle this instance
     static void *thread(void *instance);
 
+    // Can jump?
+    bool can_jump();
+
+    // Jump
+    bool jump();
+
     // Thread handler
     pthread_t thread_handler;
 };
@@ -62,8 +68,41 @@ void *Toad::thread(void *instance)
 
     pthread_barrier_wait(&start);
 
-    for (int i = 0; i < 10; i++)
-        printf("Yay %d\n", toad.position);
+    while (true)
+    {
+        bool jumped = false;
+        if (jumped = toad.can_jump())
+        {
+            sem_wait(&stones_semaphore);
+            jumped = toad.jump();
+            sem_post(&stones_semaphore);
+        }
+
+        if (!jumped)
+            cant_jump_counter++;
+    }
+}
+
+bool Toad::can_jump() {
+    bool result = position > 0 && !stones[position - 1];
+    result |= position > 1 && !stones[position - 2];
+    return result;
+}
+
+bool Toad::jump() {
+    stones[position] = 0;
+
+    bool jumped = false;
+    
+    // Check if can jump 2 forward
+    if (!jumped && (jumped = (position > 1 && !stones[position - 2])))
+        stones[position - 2] = this;
+    
+    // Check if can jump 1 forward
+    if (!jumped && (jumped = (position > 0 && !stones[position - 1])))
+        stones[position - 1] = this;
+
+    return jumped;
 }
 
 /**
