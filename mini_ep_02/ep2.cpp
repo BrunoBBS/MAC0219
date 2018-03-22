@@ -8,7 +8,7 @@
 #define DEADLOCK_THRESHOLD 10000
 int cant_jump_counter;
 sem_t stones_semaphore;
-pthread_barrier_t start;
+pthread_barrier_t start_b;
 
 /**
  * Class to represent object - Provides basic identification functionality
@@ -108,7 +108,7 @@ Toad::Toad(int tid, int starting_stone, Threaded **stones)
 
 void Toad::run()
 {
-    pthread_barrier_wait(&start);
+    pthread_barrier_wait(&start_b);
 
     while (cant_jump_counter < DEADLOCK_THRESHOLD)
     {
@@ -191,7 +191,7 @@ Frog::Frog(int fid, int starting_stone, Threaded **stones)
 void Frog::run()
 {
     // Waits the program to start
-    pthread_barrier_wait(&start);
+    pthread_barrier_wait(&start_b);
 
     while (cant_jump_counter < DEADLOCK_THRESHOLD)
     {
@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
 
     // Initialize the semaphore to atomize the frog jumps
     sem_init(&stones_semaphore, 0, 1);
-    pthread_barrier_init(&start, nullptr, frogs + toads + 1);
+    pthread_barrier_init(&start_b, nullptr, frogs + toads + 1);
     
     // Create stones array
     Threaded **stones = new Threaded*[stones_cnt];
@@ -258,7 +258,7 @@ int main(int argc, char *argv[])
         else printf("(nada), ");
     }
     printf("\n");
-    pthread_barrier_wait(&start);
+    pthread_barrier_wait(&start_b);
 
     while(true)
     {
