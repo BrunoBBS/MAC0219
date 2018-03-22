@@ -10,6 +10,8 @@
  * 2: frog
  */
 
+// Number of failed jumps the suggest a deadlock
+#define DEADLOCK_THRESHOLD 10000
 int cant_jump_counter;
 sem_t stones_semaphore;
 pthread_barrier_t start;
@@ -155,18 +157,21 @@ void *Frog::thread(void *frog_instance)
     // Waits the program to start
     pthread_barrier_wait(&start);
 
-    if (instance->can_jump()) {
-        sem_wait(&stones_semaphore);
-        if (instance->can_jump())
-            instance->jump();
+    while (cant_jump_counter < DEADLOCK_THRESHOLD)
+    {
+        if (instance->can_jump()) {
+            sem_wait(&stones_semaphore);
+            if (instance->can_jump())
+                instance->jump();
+            else
+                cant_jump_counter++;
+            // TODO: There are two ways to detect a deadlock taht have to be
+            // implmented
+            sem_post(&stones_semaphore);
+        }
         else
             cant_jump_counter++;
-        // TODO: There are two ways to detect a deadlock taht have to be
-        // implmented
-        sem_post(&stones_semaphore);
     }
-    else
-        cant_jump_counter++;
 }
 
 int Frog::jump()
