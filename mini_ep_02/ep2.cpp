@@ -104,7 +104,7 @@ void Toad::run()
 {
     pthread_barrier_wait(&start);
 
-    while (true)
+    while (cant_jump_counter < DEADLOCK_THRESHOLD)
     {
         bool jumped = false;
         if (jumped = can_jump())
@@ -116,6 +116,8 @@ void Toad::run()
 
         if (!jumped)
             cant_jump_counter++;
+        else
+            cant_jump_counter = 0;
     }
 }
 
