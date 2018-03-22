@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
+<<<<<<< HEAD
 #include <string>
 
 /**
@@ -12,6 +13,8 @@
  * 2: frog
  */
 
+=======
+>>>>>>> db9e325230347d08a05e7d753b138b394d1dce8f
 // Number of failed jumps the suggest a deadlock
 #define DEADLOCK_THRESHOLD 10000
 int cant_jump_counter;
@@ -172,7 +175,7 @@ class Frog : public Threaded
     void run();
 
     // Function called wehn the frog can jump
-    int jump();
+    void jump();
 
     // Funtion that evaluates if Frog can jump
     bool can_jump();
@@ -208,9 +211,10 @@ void Frog::run()
     }
 }
 
-int Frog::jump()
+void Frog::jump()
 {
-    stones[position + 1] = this;
+    int k                = stones[position + 1] == 0 ? 1 : 2;
+    stones[position + k] = this;
     stones[position]     = 0;
 }
 
