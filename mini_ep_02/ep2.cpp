@@ -39,6 +39,9 @@ class Threaded : public Object
     // Constructor
     Threaded(std::string identifier);
 
+    // Starts thread
+    void start();
+
     // Wait for thread to finish
     void wait();
 
@@ -56,8 +59,11 @@ class Threaded : public Object
 
 Threaded::Threaded(std::string identifier) :
     Object(identifier)
+{}
+
+void Threaded::start()
 {
-    pthread_create(&this->thread_handler, nullptr, &Threaded::thread, this);
+    pthread_create(&thread_handler, nullptr, &Threaded::thread, this);
 }
 
 void Threaded::wait() { pthread_join(this->thread_handler, nullptr); }
@@ -77,7 +83,7 @@ class Toad : public Threaded
     Toad(int tid, int starting_stone, Threaded **stones);
 
   private:
-    // Position
+    // Posiion
     int position;
 
     // Pointer to stone array
@@ -242,9 +248,9 @@ int main(int argc, char *argv[])
         stones[i] = nullptr;
     
     for (int i = 0; i < frogs; i++)
-        new Frog(i, i, stones);
+        (new Frog(i, i, stones))->start();
     for (int i = 0; i < toads; i++)
-        new Toad(i, stones_cnt - i - 1, stones);
+        (new Toad(i, stones_cnt - i - 1, stones))->start();
 
     for (int i = 0; i < stones_cnt; i++)
     {
