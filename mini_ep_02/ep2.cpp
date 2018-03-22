@@ -2,19 +2,8 @@
 #include <semaphore.h>
 #include <stdio.h>
 #include <unistd.h>
-
-<<<<<<< HEAD
 #include <string>
 
-/**
- * The stones array receive:
- * 0: free
- * 1: toad
- * 2: frog
- */
-
-=======
->>>>>>> db9e325230347d08a05e7d753b138b394d1dce8f
 // Number of failed jumps the suggest a deadlock
 #define DEADLOCK_THRESHOLD 10000
 int cant_jump_counter;
@@ -143,11 +132,11 @@ bool Toad::jump() {
     
     // Check if can jump 2 forward
     if (!jumped && (jumped = (position > 1 && !stones[position - 2])))
-        stones[position - 2] = this;
+        stones[position -= 2] = this;
     
     // Check if can jump 1 forward
     if (!jumped && (jumped = (position > 0 && !stones[position - 1])))
-        stones[position - 1] = this;
+        stones[position -= 1] = this;
 
     return jumped;
 }
@@ -216,6 +205,7 @@ void Frog::jump()
     int k                = stones[position + 1] == 0 ? 1 : 2;
     stones[position + k] = this;
     stones[position]     = 0;
+    position += k;
 }
 
 bool Frog::can_jump() { return !stones[position + 1] || !stones[position + 2]; }
@@ -252,6 +242,12 @@ int main(int argc, char *argv[])
     for (int i = 0; i < toads; i++)
         new Toad(i, stones_cnt - i - 1, stones);
 
+    for (int i = 0; i < stones_cnt; i++)
+    {
+        if (stones[i]) printf("%s, ", stones[i]->get_identifier().c_str());
+        else printf("(nada), ");
+    }
+    printf("\n");
     pthread_barrier_wait(&start);
 
     while(true)
@@ -259,10 +255,10 @@ int main(int argc, char *argv[])
         for (int i = 0; i < stones_cnt; i++)
         {
             if (stones[i]) printf("%s, ", stones[i]->get_identifier().c_str());
-            else printf("(nil), ");
-
+            else printf("(nada), ");
         }
         printf("\n");
+        usleep(1000000);
     }
     
     // Wait for threads to finish
