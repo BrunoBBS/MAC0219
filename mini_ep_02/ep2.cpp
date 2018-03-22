@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include <string>
+
 /**
  * The stones array receive:
  * 0: free
@@ -17,29 +19,77 @@ sem_t stones_semaphore;
 pthread_barrier_t start;
 
 /**
- * Class representing a toad
+ * Class to represent object - Provides basic identification functionality
  */
-class Toad
+class Object
+{
+  public:
+    Object(std::string identifier);
+
+    // Get identifier string
+    std::string get_identifier() { return identifier; }
+
+  private:
+    std::string identifier;
+};
+
+Object::Object(std::string identifier) :
+    identifier(identifier)
+{
+}
+
+/**
+ * Threaded objects
+ */
+class Threaded : public Object
 {
   public:
     // Constructor
-    Toad(int starting_stone, void **stones);
+    Threaded(std::string identifier);
 
-    // Starts thread
-    void start_thread();
-
-    // Waits thread
+    // Wait for thread to finish
     void wait();
+
+  protected:
+    // Virtual function to run on thread
+    virtual void run() = 0;
+
+  private:
+    // Static function to be called by thread
+    static void *thread(void *instance);
+
+    // Thread handler
+    pthread_t thread_handler;
+};
+
+Threaded::Threaded(std::string identifier) :
+    Object(identifier)
+{
+    pthread_create(&this->thread_handler, nullptr, &Threaded::thread, this);
+}
+
+void Threaded::wait() { pthread_join(this->thread_handler, nullptr); }
+
+void *Threaded::thread(void *instance) {
+    Threaded &obj = *((Threaded *) instance);
+    obj.run();
+}
+
+/**
+ * Class representing a toad
+ */
+class Toad : public Threaded
+{
+  public:
+    // Constructor
+    Toad(int tid, int starting_stone, Threaded **stones);
 
   private:
     // Position
     int position;
 
     // Pointer to stone array
-    void **stones;
-
-    // Starts thread to handle this instance
-    static void *thread(void *instance);
+    Threaded **stones;
 
     // Can jump?
     bool can_jump();
@@ -47,36 +97,28 @@ class Toad
     // Jump
     bool jump();
 
-    // Thread handler
-    pthread_t thread_handler;
+    // Main logic
+    void run();
 };
 
-Toad::Toad(int starting_stone, void **stones)
-    : position(starting_stone), stones(stones)
+Toad::Toad(int tid, int starting_stone, Threaded **stones)
+    : position(starting_stone), stones(stones),
+    Threaded("Toad " + std::to_string(tid))
 {
     stones[position] = this;
 }
 
-void Toad::start_thread()
+void Toad::run()
 {
-    pthread_create(&this->thread_handler, nullptr, &Toad::thread, this);
-}
-
-void Toad::wait() { pthread_join(this->thread_handler, nullptr); }
-
-void *Toad::thread(void *instance)
-{
-    Toad &toad = *((Toad *)instance);
-
     pthread_barrier_wait(&start);
 
     while (true)
     {
         bool jumped = false;
-        if (jumped = toad.can_jump())
+        if (jumped = can_jump())
         {
             sem_wait(&stones_semaphore);
-            jumped = toad.jump();
+            jumped = jump();
             sem_post(&stones_semaphore);
         }
 
@@ -110,11 +152,11 @@ bool Toad::jump() {
 /**
  * Class representing a frog (start on the left and go to the right)
  */
-class Frog
+class Frog : public Threaded
 {
   public:
     // Constructor
-    Frog(int starting_stone, void **stones);
+    Frog(int fid, int starting_stone, Threaded **stones);
 
     // Waits Thread to finalise
     void wait();
@@ -123,18 +165,11 @@ class Frog
     // Frog's position in the stone array
     int position;
 
-    // Thread handler
-    pthread_t thread_handler;
-
     // Pointer to the stone array
-    void **stones;
+    Threaded **stones;
 
-    /**
-     * Function passed to the thread initializer to be the main thread function
-     * Receives: a frog instance (since it has to be static), the barrier to
-     * sync the start and the semaphore to stomize actions in the stone array
-     */
-    static void *thread(void *frog_instance);
+    // Main logic
+    void run();
 
     // Function called wehn the frog can jump
     int jump();
@@ -143,26 +178,25 @@ class Frog
     bool can_jump();
 };
 
-Frog::Frog(int starting_stone, void **stones)
-    : position(starting_stone), stones(stones)
+Frog::Frog(int fid, int starting_stone, Threaded **stones)
+    : position(starting_stone), stones(stones),
+    Threaded("Frog " + std::to_string(fid))
 {
     // TODO: We have to find a way to better represent this
     stones[position] = this;
-    pthread_create(&this->thread_handler, nullptr, &Frog::thread, this);
 }
 
-void *Frog::thread(void *frog_instance)
+void Frog::run()
 {
-    Frog *instance = (Frog *)frog_instance;
     // Waits the program to start
     pthread_barrier_wait(&start);
 
     while (cant_jump_counter < DEADLOCK_THRESHOLD)
     {
-        if (instance->can_jump()) {
+        if (can_jump()) {
             sem_wait(&stones_semaphore);
-            if (instance->can_jump())
-                instance->jump();
+            if (can_jump())
+                jump();
             else
                 cant_jump_counter++;
             // TODO: There are two ways to detect a deadlock taht have to be
@@ -182,14 +216,57 @@ int Frog::jump()
 
 bool Frog::can_jump() { return !stones[position + 1] || !stones[position + 2]; }
 
-void Frog::wait() { pthread_join(this->thread_handler, nullptr); }
-
 /**
  * Where the rest of the program lies
  */
 int main(int argc, char *argv[])
 {
     cant_jump_counter = 0;
+
+    // Read values
+    int frogs, toads;
+
+    printf("Frogs: ");
+    scanf("%d", &frogs);
+    
+    printf("Toads: ");
+    scanf("%d", &toads);
+
+    int stones_cnt = frogs + toads + 1;
+
     // Initialize the semaphore to atomize the frog jumps
     sem_init(&stones_semaphore, 0, 1);
+    pthread_barrier_init(&start, nullptr, frogs + toads + 1);
+    
+    // Create stones array
+    Threaded **stones = new Threaded*[stones_cnt];
+    for (int i = 0; i < stones_cnt; i++)
+        stones[i] = nullptr;
+    
+    for (int i = 0; i < frogs; i++)
+        new Frog(i, i, stones);
+    for (int i = 0; i < toads; i++)
+        new Toad(i, stones_cnt - i - 1, stones);
+
+    pthread_barrier_wait(&start);
+
+    while(true)
+    {
+        for (int i = 0; i < stones_cnt; i++)
+        {
+            if (stones[i]) printf("%s, ", stones[i]->get_identifier().c_str());
+            else printf("(nil), ");
+
+        }
+        printf("\n");
+    }
+    
+    // Wait for threads to finish
+    for (int i = 0; i < stones_cnt; i++)
+        if (stones[i]) stones[i]->wait();
+
+    // Cleanup
+    for (int i = 0; i < stones_cnt; i++)
+        if (stones[i]) delete stones[i];
+    delete stones;
 }
