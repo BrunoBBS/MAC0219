@@ -138,6 +138,8 @@ bool Toad::jump() {
     if (!jumped && (jumped = (position > 0 && !stones[position - 1])))
         stones[position -= 1] = this;
 
+    if (!jumped) stones[position] = this;
+
     return jumped;
 }
 
