@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 // Number of failed jumps that suggest a deadlock
-int DEADLOCK_THRESHOLD;
+int DEADLOCK_ALERT;
 int cant_jump_counter;
 sem_t stones_semaphore;
 pthread_barrier_t start_b;
@@ -106,7 +106,7 @@ void Toad::run()
 {
     pthread_barrier_wait(&start_b);
 
-    while (cant_jump_counter < DEADLOCK_THRESHOLD)
+    while (!DEADLOCK_ALERT)
     {
         bool jumped = false;
         if (jumped = can_jump()) {
@@ -190,7 +190,7 @@ void Frog::run()
     // Waits the program to start
     pthread_barrier_wait(&start_b);
 
-    while (cant_jump_counter < DEADLOCK_THRESHOLD)
+    while (!DEADLOCK_ALERT)
     {
         if (can_jump()) {
             sem_wait(&stones_semaphore);
@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
 
     int stones_cnt = frogs + toads + 1;
 
-    DEADLOCK_THRESHOLD = stones_cnt * 100000;
+    DEADLOCK_ALERT = 0;
     // Initialize the semaphore to atomize the frog jumps
     sem_init(&stones_semaphore, 0, 1);
     pthread_barrier_init(&start_b, nullptr, frogs + toads + 1);
@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
     printf("\n");
     pthread_barrier_wait(&start_b);
 
-    while (cant_jump_counter < DEADLOCK_THRESHOLD)
+    while (!DEADLOCK_ALERT)
     {
         for (int i = 0; i < stones_cnt; i++)
         {
@@ -269,7 +269,7 @@ int main(int argc, char *argv[])
                 printf("(nada), ");
         }
         printf("\n");
-        printf("\n%d/%d\n", cant_jump_counter, DEADLOCK_THRESHOLD);
+        printf("IS DEADLOCK? %s\n", DEADLOCK_ALERT ? "YES" : "NO");
         usleep(10000);
     }
 
