@@ -261,7 +261,7 @@ int main(int argc, char *argv[])
     printf("\n");
     pthread_barrier_wait(&start_b);
 
-    while (true)
+    while (cant_jump_counter < DEADLOCK_THRESHOLD)
     {
         for (int i = 0; i < stones_cnt; i++)
         {
@@ -272,7 +272,7 @@ int main(int argc, char *argv[])
         }
         printf("\n");
         printf("\n%d/%d\n", cant_jump_counter, DEADLOCK_THRESHOLD);
-        usleep(1000000);
+        usleep(10000);
     }
 
     for (int i = 0; i < stones_cnt; i++)

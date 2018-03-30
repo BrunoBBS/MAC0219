@@ -1,3 +1,5 @@
 all:
-	g++ ep2.cpp -lpthread -o ep2.run
-	./ep2.run
+	g++ ep2.cpp -lpthread -o ep2_c.run
+	g++ ep2_o.cpp -lpthread -o ep2_o.run
+	./ep2_c.run
+	./ep2_o.run
