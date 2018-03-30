@@ -198,8 +198,6 @@ void Frog::run()
                 jump();
             else
                 cant_jump_counter++;
-            // TODO: There are two ways to detect a deadlock that have to be
-            // implmented
             sem_post(&stones_semaphore);
         }
         else
