@@ -97,7 +97,7 @@ class Toad : public Threaded
 
 Toad::Toad(int tid, int starting_stone, Threaded **stones)
     : position(starting_stone), stones(stones),
-      Threaded("Toad " + std::to_string(tid))
+      Threaded("T" + std::to_string(tid))
 {
     stones[position] = this;
 }
@@ -179,7 +179,7 @@ class Frog : public Threaded
 
 Frog::Frog(int fid, int starting_stone, Threaded **stones)
     : position(starting_stone), stones(stones),
-      Threaded("Frog " + std::to_string(fid))
+      Threaded("F" + std::to_string(fid))
 {
     // TODO: We have to find a way to better represent this
     stones[position] = this;
@@ -213,6 +213,7 @@ void Frog::jump()
     stones[position + k] = this;
     stones[position]     = 0;
     position += k;
+    cant_jump_counter = 0;
 }
 
 bool Frog::can_jump() { return !stones[position + 1] || !stones[position + 2]; }
@@ -265,9 +266,9 @@ int main(int argc, char *argv[])
         for (int i = 0; i < stones_cnt; i++)
         {
             if (stones[i])
-                printf("%s", stones[i]->;
+                printf("%s, ", stones[i]->get_identifier().c_str());
             else
-                printf("(nada)");
+                printf("(nada), ");
         }
         printf("\n");
         printf("\n%d/%d\n", cant_jump_counter, DEADLOCK_THRESHOLD);
