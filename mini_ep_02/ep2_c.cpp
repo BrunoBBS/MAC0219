@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string>
 #include <unistd.h>
+#include <vector>
 
 // Number of failed jumps that suggest a deadlock
 int DEADLOCK_THRESHOLD;
@@ -76,14 +77,14 @@ class Toad : public Threaded
 {
   public:
     // Constructor
-    Toad(int tid, int starting_stone, Threaded **stones);
+    Toad(int tid, int starting_stone, std::vector<Threaded *> &stones);
 
   private:
     // Posiion
     int position;
 
     // Pointer to stone array
-    Threaded **stones;
+    std::vector<Threaded *> &stones;
 
     // Can jump?
     bool can_jump();
@@ -95,7 +96,7 @@ class Toad : public Threaded
     void run();
 };
 
-Toad::Toad(int tid, int starting_stone, Threaded **stones)
+Toad::Toad(int tid, int starting_stone, std::vector<Threaded *> &stones)
     : position(starting_stone), stones(stones),
       Threaded("T" + std::to_string(tid))
 {
@@ -155,7 +156,7 @@ class Frog : public Threaded
 {
   public:
     // Constructor
-    Frog(int fid, int starting_stone, Threaded **stones);
+    Frog(int fid, int starting_stone, std::vector<Threaded *> &stones);
 
     // Waits Thread to finalise
     void wait();
@@ -165,7 +166,7 @@ class Frog : public Threaded
     int position;
 
     // Pointer to the stone array
-    Threaded **stones;
+    std::vector<Threaded *> &stones;
 
     // Main logic
     void run();
@@ -177,7 +178,7 @@ class Frog : public Threaded
     bool can_jump();
 };
 
-Frog::Frog(int fid, int starting_stone, Threaded **stones)
+Frog::Frog(int fid, int starting_stone, std::vector<Threaded *> &stones)
     : position(starting_stone), stones(stones),
       Threaded("F" + std::to_string(fid))
 {
@@ -214,7 +215,11 @@ void Frog::jump()
     cant_jump_counter = 0;
 }
 
-bool Frog::can_jump() { return !stones[position + 1] || !stones[position + 2]; }
+bool Frog::can_jump()
+{
+    return (position + 2 < stones.size() && !stones[position + 2]) ||
+           (position + 1 < stones.size() && !stones[position + 1]);
+}
 
 /**
  * Where the rest of the program lies
@@ -240,9 +245,7 @@ int main(int argc, char *argv[])
     pthread_barrier_init(&start_b, nullptr, frogs + toads + 1);
 
     // Create stones array
-    Threaded **stones = new Threaded *[stones_cnt];
-    for (int i = 0; i < stones_cnt; i++)
-        stones[i] = nullptr;
+    std::vector<Threaded *> stones(stones_cnt);
 
     for (int i = 0; i < frogs; i++)
         (new Frog(i, i, stones))->start();
@@ -298,5 +301,4 @@ int main(int argc, char *argv[])
     // Cleanup
     for (int i = 0; i < stones_cnt; i++)
         if (stones[i]) delete stones[i];
-    delete stones;
 }
