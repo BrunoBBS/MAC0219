@@ -1,5 +1,6 @@
 Nós fizemos dois programas separados (ep2_c.cpp, com o contador, ep2_o.cpp, com o overseer), para facilidade de execução e teste. Ambos os programas 
-inicialmente recebem N e M, pelo stdin (entrada padrão).
+inicialmente recebem N e M, pelo stdin (entrada padrão). Para a execução, é necessário apenas a execução de 'make'; O programa é compilado e 
+executado, primeiro a versão com contador, seguida da versão com overseer.
 
 Primeiramente, o ep2_c.cpp contém um contador global que é incrementado toda vez que um sapo falha a pular (Assumimos que a operação de incremento e 
 atribuição são atômicas para facilitar o código). Cada animal checa individualmente o estado do contador, e para de executar caso este seja maior que 
