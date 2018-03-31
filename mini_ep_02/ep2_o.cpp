@@ -223,15 +223,37 @@ bool Frog::can_jump()
 void *overseer(void *argument)
 {
     std::vector<Threaded *> &stones = *((std::vector<Threaded *> *)argument);
+    int possible_deadlock = 0;
     pthread_barrier_wait(&start_b);
-    while (!DEADLOCK_ALERT)
+    while (DEADLOCK_ALERT == 0)
     {
+        possible_deadlock = 1;
         sem_wait(&stones_semaphore);
-        DEADLOCK_ALERT = 1;
         for (int i = 0; i < stones.size(); i++)
-            if (stones[i] != 0 && stones[i]->can_jump()) DEADLOCK_ALERT = 0;
+            if (stones[i] != 0 && stones[i]->can_jump()) possible_deadlock = 0;
         sem_post(&stones_semaphore);
+        DEADLOCK_ALERT = possible_deadlock;
+        if (DEADLOCK_ALERT) break;
     }
+    printf("Overseer finisehd\n");
+}
+
+/**
+ * Prints state of the stones for debugging
+ */
+void print(std::vector<Threaded *> &stones, int stones_cnt)
+{
+    printf("\nGlobal deadlock indicator: %s\n", DEADLOCK_ALERT ? "YES" : "NO");
+    for (int i = 0; i < stones_cnt; i++)
+    {
+        if (stones[i])
+            printf("%s", stones[i]->get_identifier().c_str());
+        else
+            printf("__");
+
+        if (i != stones_cnt - 1) printf(", ");
+    }
+    printf("\n");
 }
 
 /**
@@ -265,13 +287,16 @@ int main(int argc, char *argv[])
     for (int i = 0; i < toads; i++)
         (new Toad(i, stones_cnt - i - 1, stones))->start();
 
+    print(stones, stones_cnt);
     pthread_create(&thread_overseer, nullptr, &overseer, &stones);
 
     while (!DEADLOCK_ALERT)
     {
-        printf("Im printing;\n");
+        print(stones, stones_cnt);
         usleep(100000);
     }
+
+    pthread_join(thread_overseer, nullptr);
 
     // Wait for threads to finish
     for (int i = 0; i < stones_cnt; i++)
@@ -280,4 +305,6 @@ int main(int argc, char *argv[])
     // Cleanup
     for (int i = 0; i < stones_cnt; i++)
         if (stones[i]) delete stones[i];
+
+    printf("Finished all\n");
 }
