@@ -222,6 +222,25 @@ bool Frog::can_jump()
 }
 
 /**
+ * Prints state of the stones for debugging
+ */
+void print(Threaded** stones, int stones_cnt)
+{
+    printf("\nGlobal deadlock indicator: %d/%d\n", cant_jump_counter, DEADLOCK_THRESHOLD);
+    for (int i = 0; i < stones_cnt; i++)
+    {
+        if (stones[i])
+            printf("%s", stones[i]->get_identifier().c_str());
+        else
+            printf("__");
+        
+        if (i != stones_cnt - 1)
+            printf(", ");
+    }
+    printf("\n");
+}
+
+/**
  * Where the rest of the program lies
  */
 int main(int argc, char *argv[])
@@ -252,51 +271,21 @@ int main(int argc, char *argv[])
     for (int i = 0; i < toads; i++)
         (new Toad(i, stones_cnt - i - 1, stones))->start();
 
-    for (int i = 0; i < stones_cnt; i++)
-    {
-        if (stones[i])
-            printf("%s, ", stones[i]->get_identifier().c_str());
-        else
-            printf("(nada), ");
-    }
-    printf("\n");
+    print(stones, stones_cnt);
+
     pthread_barrier_wait(&start_b);
 
     while (cant_jump_counter < DEADLOCK_THRESHOLD)
     {
-        for (int i = 0; i < stones_cnt; i++)
-        {
-            if (stones[i])
-                printf("%s, ", stones[i]->get_identifier().c_str());
-            else
-                printf("(nada), ");
-        }
-        printf("\n");
-        printf("\n%d/%d\n", cant_jump_counter, DEADLOCK_THRESHOLD);
+        print(stones, stones_cnt);
         usleep(10000);
     }
-
-    for (int i = 0; i < stones_cnt; i++)
-    {
-        if (stones[i])
-            printf("%s, ", stones[i]->get_identifier().c_str());
-        else
-            printf("(nada), ");
-    }
-    printf("\n");
 
     // Wait for threads to finish
     for (int i = 0; i < stones_cnt; i++)
         if (stones[i]) stones[i]->wait();
 
-    for (int i = 0; i < stones_cnt; i++)
-    {
-        if (stones[i])
-            printf("%s, ", stones[i]->get_identifier().c_str());
-        else
-            printf("(nada), ");
-    }
-    printf("\n");
+    print(stones, stones_cnt);
 
     // Cleanup
     for (int i = 0; i < stones_cnt; i++)
