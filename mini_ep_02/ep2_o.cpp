@@ -3,20 +3,23 @@
 #include <stdio.h>
 #include <string>
 #include <unistd.h>
+#include <vector>
 
 // Number of failed jumps that suggest a deadlock
 int DEADLOCK_ALERT;
-int cant_jump_counter;
 sem_t stones_semaphore;
 pthread_barrier_t start_b;
 
 /**
  * Class to represent object - Provides basic identification functionality
+ *
  */
 class Object
 {
   public:
     Object(std::string identifier);
+
+    char type;
 
     // Get identifier string
     std::string get_identifier() { return identifier; }
@@ -41,6 +44,8 @@ class Threaded : public Object
 
     // Wait for thread to finish
     void wait();
+
+    virtual bool can_jump() = 0;
 
   protected:
     // Virtual function to run on thread
@@ -76,17 +81,17 @@ class Toad : public Threaded
 {
   public:
     // Constructor
-    Toad(int tid, int starting_stone, Threaded **stones);
+    Toad(int tid, int starting_stone, std::vector<Threaded *> &stones);
+
+    // Can jump?
+    bool can_jump();
 
   private:
     // Posiion
     int position;
 
     // Pointer to stone array
-    Threaded **stones;
-
-    // Can jump?
-    bool can_jump();
+    std::vector<Threaded *> &stones;
 
     // Jump
     bool jump();
@@ -95,10 +100,11 @@ class Toad : public Threaded
     void run();
 };
 
-Toad::Toad(int tid, int starting_stone, Threaded **stones)
+Toad::Toad(int tid, int starting_stone, std::vector<Threaded *> &stones)
     : position(starting_stone), stones(stones),
       Threaded("T" + std::to_string(tid))
 {
+    this->type       = 'T';
     stones[position] = this;
 }
 
@@ -114,11 +120,6 @@ void Toad::run()
             jumped = jump();
             sem_post(&stones_semaphore);
         }
-
-        if (!jumped)
-            cant_jump_counter++;
-        else
-            cant_jump_counter = 0;
     }
 }
 
@@ -155,32 +156,33 @@ class Frog : public Threaded
 {
   public:
     // Constructor
-    Frog(int fid, int starting_stone, Threaded **stones);
+    Frog(int fid, int starting_stone, std::vector<Threaded *> &stones);
 
     // Waits Thread to finalise
     void wait();
+
+    // Funtion that evaluates if Frog can jump
+    bool can_jump();
 
   private:
     // Frog's position in the stone array
     int position;
 
     // Pointer to the stone array
-    Threaded **stones;
+    std::vector<Threaded *> &stones;
 
     // Main logic
     void run();
 
     // Function called wehn the frog can jump
     void jump();
-
-    // Funtion that evaluates if Frog can jump
-    bool can_jump();
 };
 
-Frog::Frog(int fid, int starting_stone, Threaded **stones)
+Frog::Frog(int fid, int starting_stone, std::vector<Threaded *> &stones)
     : position(starting_stone), stones(stones),
       Threaded("F" + std::to_string(fid))
 {
+    this->type = 'F';
     // TODO: We have to find a way to better represent this
     stones[position] = this;
 }
@@ -194,14 +196,9 @@ void Frog::run()
     {
         if (can_jump()) {
             sem_wait(&stones_semaphore);
-            if (can_jump())
-                jump();
-            else
-                cant_jump_counter++;
+            if (can_jump()) jump();
             sem_post(&stones_semaphore);
         }
-        else
-            cant_jump_counter++;
     }
 }
 
@@ -211,18 +208,59 @@ void Frog::jump()
     stones[position + k] = this;
     stones[position]     = 0;
     position += k;
-    cant_jump_counter = 0;
 }
 
-bool Frog::can_jump() { return !stones[position + 1] || !stones[position + 2]; }
+bool Frog::can_jump()
+{
+    return (position + 2 < stones.size() && !stones[position + 2]) ||
+           (position + 1 < stones.size() && !stones[position + 1]);
+}
+
+/**
+ * Overseer function. Used in the overseer thread to check if there
+ * TTFF
+ */
+void *overseer(void *argument)
+{
+    std::vector<Threaded *> &stones = *((std::vector<Threaded *> *)argument);
+    int possible_deadlock = 0;
+    pthread_barrier_wait(&start_b);
+    while (DEADLOCK_ALERT == 0)
+    {
+        possible_deadlock = 1;
+        sem_wait(&stones_semaphore);
+        for (int i = 0; i < stones.size(); i++)
+            if (stones[i] != 0 && stones[i]->can_jump()) possible_deadlock = 0;
+        sem_post(&stones_semaphore);
+        DEADLOCK_ALERT = possible_deadlock;
+        if (DEADLOCK_ALERT) break;
+    }
+    printf("Overseer finisehd\n");
+}
+
+/**
+ * Prints state of the stones for debugging
+ */
+void print(std::vector<Threaded *> &stones, int stones_cnt)
+{
+    printf("\nGlobal deadlock indicator: %s\n", DEADLOCK_ALERT ? "YES" : "NO");
+    for (int i = 0; i < stones_cnt; i++)
+    {
+        if (stones[i])
+            printf("%s", stones[i]->get_identifier().c_str());
+        else
+            printf("__");
+
+        if (i != stones_cnt - 1) printf(", ");
+    }
+    printf("\n");
+}
 
 /**
  * Where the rest of the program lies
  */
 int main(int argc, char *argv[])
 {
-    cant_jump_counter = 0;
-
     // Read values
     int frogs, toads;
 
@@ -235,68 +273,38 @@ int main(int argc, char *argv[])
     int stones_cnt = frogs + toads + 1;
 
     DEADLOCK_ALERT = 0;
+    pthread_t thread_overseer;
+
     // Initialize the semaphore to atomize the frog jumps
     sem_init(&stones_semaphore, 0, 1);
     pthread_barrier_init(&start_b, nullptr, frogs + toads + 1);
 
     // Create stones array
-    Threaded **stones = new Threaded *[stones_cnt];
-    for (int i = 0; i < stones_cnt; i++)
-        stones[i] = nullptr;
+    std::vector<Threaded *> stones(stones_cnt);
 
     for (int i = 0; i < frogs; i++)
         (new Frog(i, i, stones))->start();
     for (int i = 0; i < toads; i++)
         (new Toad(i, stones_cnt - i - 1, stones))->start();
 
-    for (int i = 0; i < stones_cnt; i++)
-    {
-        if (stones[i])
-            printf("%s, ", stones[i]->get_identifier().c_str());
-        else
-            printf("(nada), ");
-    }
-    printf("\n");
-    pthread_barrier_wait(&start_b);
+    print(stones, stones_cnt);
+    pthread_create(&thread_overseer, nullptr, &overseer, &stones);
 
     while (!DEADLOCK_ALERT)
     {
-        for (int i = 0; i < stones_cnt; i++)
-        {
-            if (stones[i])
-                printf("%s, ", stones[i]->get_identifier().c_str());
-            else
-                printf("(nada), ");
-        }
-        printf("\n");
-        printf("IS DEADLOCK? %s\n", DEADLOCK_ALERT ? "YES" : "NO");
-        usleep(10000);
+        print(stones, stones_cnt);
+        usleep(100000);
     }
 
-    for (int i = 0; i < stones_cnt; i++)
-    {
-        if (stones[i])
-            printf("%s, ", stones[i]->get_identifier().c_str());
-        else
-            printf("(nada), ");
-    }
-    printf("\n");
+    pthread_join(thread_overseer, nullptr);
 
     // Wait for threads to finish
     for (int i = 0; i < stones_cnt; i++)
         if (stones[i]) stones[i]->wait();
 
-    for (int i = 0; i < stones_cnt; i++)
-    {
-        if (stones[i])
-            printf("%s, ", stones[i]->get_identifier().c_str());
-        else
-            printf("(nada), ");
-    }
-    printf("\n");
-
     // Cleanup
     for (int i = 0; i < stones_cnt; i++)
         if (stones[i]) delete stones[i];
-    delete stones;
+
+    printf("Finished all\n");
 }

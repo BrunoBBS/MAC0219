@@ -224,18 +224,18 @@ bool Frog::can_jump()
 /**
  * Prints state of the stones for debugging
  */
-void print(Threaded** stones, int stones_cnt)
+void print(std::vector<Threaded *> &stones, int stones_cnt)
 {
-    printf("\nGlobal deadlock indicator: %d/%d\n", cant_jump_counter, DEADLOCK_THRESHOLD);
+    printf("\nGlobal deadlock indicator: %d/%d\n", cant_jump_counter,
+           DEADLOCK_THRESHOLD);
     for (int i = 0; i < stones_cnt; i++)
     {
         if (stones[i])
             printf("%s", stones[i]->get_identifier().c_str());
         else
             printf("__");
-        
-        if (i != stones_cnt - 1)
-            printf(", ");
+
+        if (i != stones_cnt - 1) printf(", ");
     }
     printf("\n");
 }
@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
     while (cant_jump_counter < DEADLOCK_THRESHOLD)
     {
         print(stones, stones_cnt);
-        usleep(10000);
+        usleep(100000);
     }
 
     // Wait for threads to finish
