@@ -1,0 +1,16 @@
+Nós fizemos dois programas separados (ep2_c.cpp, com o contador, ep2_o.cpp, com o overseer), para facilidade de execução e teste. Ambos os programas 
+inicialmente recebem N e M, pelo stdin (entrada padrão).
+
+Primeiramente, o ep2_c.cpp contém um contador global que é incrementado toda vez que um sapo falha a pular (Assumimos que a operação de incremento e 
+atribuição são atômicas para facilitar o código). Cada animal checa individualmente o estado do contador, e para de executar caso este seja maior que 
+um threshold, que calculamos como (N + M + 1) * 100000. Assim o aumento é linear com o número de pedras, e a constante 100000 é uma constante 
+arbitrária encontrada experimentalmente, de modo a não acusar facilmente falsos positivos - Acusar um deadlock quando não há um. Também prezamos 
+escolher um número que não fizesse o programa executar por muito tempo após a ocorrência de um deadlock. Essa solução foi discutivelmente mais simples 
+e leve, pois as próprias threads gerenciam seu próprio estado. Mas há o problema dela não ser garantidamente correta. (Sempre há a possibilidade do 
+contador chegar ao limite antes que o sapo que pode pular seja executado)
+
+Já no ep2_o.cpp, implementamos uma nova thread 'overseer', que verifica continuamente se há qualquer animal nas pedras que consegue se mover. Há 
+também uma flag global booleana, para indicação de deadlocks. Quando não há nenhum animal capaz de pular, a flag é ativada pela 'overseer', e os 
+animais sabem, assim, que devem finalizar suas threads. A thread gerente também é finalizada quando isso ocorre, indicando deadlock. Essa solução é 
+mais complexa, e consequentemente mais lenta, pois há uma thread que constantemente verifica o estado de todas as outras. Mas é necessariamente 
+correta (A thread gerente ativa a flag de deadlock apenas se todos os animais estão incapazes de saltar)
