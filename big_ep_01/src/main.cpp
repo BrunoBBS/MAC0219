@@ -7,11 +7,11 @@
 
 #include "util.hpp"
 
-// Read matrix from file [ONLY] after reading matrix dimensions
-void loadMatrix(double **M, uint64_t l, uint64_t c, std::ifstream &M_file, std::string M_name = "[?]")
+// Read matrix B from file in the right format (transpose)
+void loadB(double **M, uint64_t l, uint64_t c, std::ifstream &M_file)
 {
     for (uint64_t i = 0; i < l; i++)
-        for (uint64_t j = 0; j < c; j++)
+        for (uint64_t j = 0; j < c * 2; j++)
             M[i][j] = 0;
 
     uint64_t i, j;
@@ -23,7 +23,28 @@ void loadMatrix(double **M, uint64_t l, uint64_t c, std::ifstream &M_file, std::
         j--;
 
         if (i < 0 || i >= l || j < 0 || j >= c)
+            error(format("Invalid coordinates (%lld, %lld) in matrix B", i, j));
+        
+        M[j][i * 2] = val;
+    }
+}
+
+// Read one row from given file to a vector
+bool loadRow(double *row, uint64_t l, uint64_t c, std::ifstream &M_file, std::string M_name = "[?]")
+{
+    uint64_t i, j;
+    double val;
+
+    while (M_file >> i >> j >> val)
+    {
+        i--;
+        j--;
+
+        if (i < 0 || i >= l || j < 0 || j >= c)
             error(format("Invalid coordinates (%lld, %lld) in matrix %s", i, j, M_name.c_str()));
+
+        // TODO: Must be made
+
     }
 }
 
@@ -69,28 +90,35 @@ int main(int argc, char **argv)
     }
     catch (std::string e) { error(e); }
 
-    // Allocate Matrices
-    double **A, **B;
+    // Allocate Matrices (A will be loaded on the fly)
+    double **B;
     double **C;
 
-    A = new double*[m];
-    for (uint64_t i = 0; i < m; i++) A[i] = new double[p];
+    //A = new double*[m];
+    //for (uint64_t i = 0; i < m; i++) A[i] = new double[p];
 
-    B = new double*[p];
-    for (uint64_t i = 0; i < p; i++) B[i] = new double[n];
+    B = new double*[n];
+    for (uint64_t i = 0; i < p; i++) B[i] = new double[2 * p];
     
     C = new double*[m];
     for (uint64_t i = 0; i < m; i++) C[i] = new double[n];
 
-    // Load matrices from file
-    loadMatrix(A, m, p, A_file, "A");
-    loadMatrix(B, p, n, B_file, "B");
+    // Load B from file
+    loadB(B, p, n, B_file);
 
     // TODO: Do things here
 
+    // Allocate enough space for one row from A
+    double *A = new double[p];
+
+    while (loadRow(A, m, p, A_file, "A"))
+    {
+
+    }
+
     // Deallocate Matrices
-    for (uint64_t i = 0; i < m; i++) delete A[i];
-    delete A;
+    //for (uint64_t i = 0; i < m; i++) delete A[i];
+    //delete A;
 
     for (uint64_t i = 0; i < p; i++) delete B[i];
     delete B;
