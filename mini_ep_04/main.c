@@ -28,7 +28,7 @@
  *  for the threads and forces a context switch after this quantum elapses. 
  *  Maybe this is the fairest algorithm for this problem. Requires sudo.
 */
-#define OS_SCHEDULER SCHED_OTHER
+#define OS_SCHEDULER SCHED_RR
 
 static int64_t total_time = 0;
 static int num_threads = 0;

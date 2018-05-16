@@ -1,0 +1,1080 @@
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 10000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 84295.2, standard deviation: 95827.30227076903
+	average accesses:
+		average time: 20.52, standard deviation: 0.13266499161421694
+	standard deviation of accesses:
+		average time: 13.513433200000001, standard deviation: 5.650291334787174
+GATE:
+	elapsed time:
+		average time: 63959.0, standard deviation: 91401.32807277291
+	average accesses:
+		average time: 23.739999999999995, standard deviation: 3.5323835201366984
+	standard deviation of accesses:
+		average time: 27.831565233333333, standard deviation: 5.904685545332033
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 100000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 438728.23333333334, standard deviation: 253771.76371281384
+	average accesses:
+		average time: 200.5733333333334, standard deviation: 0.0997775303139704
+	standard deviation of accesses:
+		average time: 106.46767746666666, standard deviation: 37.46467215406996
+GATE:
+	elapsed time:
+		average time: 143778.8, standard deviation: 43885.6892660922
+	average accesses:
+		average time: 233.7, standard deviation: 17.81413296608435
+	standard deviation of accesses:
+		average time: 213.59141513333333, standard deviation: 34.09849510201223
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 3000000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 18319876.233333334, standard deviation: 2494823.5557732964
+	average accesses:
+		average time: 6000.799999999998, standard deviation: 1.8189894035458565e-12
+	standard deviation of accesses:
+		average time: 1159.827770266667, standard deviation: 396.3065603810042
+GATE:
+	elapsed time:
+		average time: 4338173.866666666, standard deviation: 1242962.1084390234
+	average accesses:
+		average time: 7162.2266666666665, standard deviation: 219.847866994934
+	standard deviation of accesses:
+		average time: 4016.459895333333, standard deviation: 1165.0988286926708
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 10000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 110797.5, standard deviation: 95516.30838998123
+	average accesses:
+		average time: 13.195833333333333, standard deviation: 0.061941953113827115
+	standard deviation of accesses:
+		average time: 6.8102455000000015, standard deviation: 1.6580716745653619
+GATE:
+	elapsed time:
+		average time: 83437.4, standard deviation: 84747.04198558594
+	average accesses:
+		average time: 13.833333333333334, standard deviation: 1.14624992426996
+	standard deviation of accesses:
+		average time: 27.497796866666665, standard deviation: 4.380392247127981
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 100000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 988337.3333333334, standard deviation: 922000.8981359086
+	average accesses:
+		average time: 125.7, standard deviation: 0.082915619758885
+	standard deviation of accesses:
+		average time: 60.136092699999985, standard deviation: 12.956792757273597
+GATE:
+	elapsed time:
+		average time: 522639.13333333336, standard deviation: 1338705.4761220566
+	average accesses:
+		average time: 152.8125, standard deviation: 13.02732504839987
+	standard deviation of accesses:
+		average time: 212.49440163333333, standard deviation: 29.547764552539505
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 3000000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 30418691.533333335, standard deviation: 6035045.69962929
+	average accesses:
+		average time: 3750.85, standard deviation: 0.07500000000000001
+	standard deviation of accesses:
+		average time: 1402.8041978666668, standard deviation: 519.2851457914945
+GATE:
+	elapsed time:
+		average time: 3881655.1, standard deviation: 234110.0658630964
+	average accesses:
+		average time: 4426.825, standard deviation: 162.84903093049095
+	standard deviation of accesses:
+		average time: 4109.101827233333, standard deviation: 792.977933717597
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 10000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 635901.8, standard deviation: 1777905.9957333212
+	average accesses:
+		average time: 10.669999999999998, standard deviation: 0.10376254944182259
+	standard deviation of accesses:
+		average time: 6.942599666666666, standard deviation: 2.365863550517095
+GATE:
+	elapsed time:
+		average time: 96968.16666666667, standard deviation: 29911.20795742329
+	average accesses:
+		average time: 11.370000000000001, standard deviation: 1.1535886037347398
+	standard deviation of accesses:
+		average time: 24.45778603333334, standard deviation: 3.54575326738868
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 100000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 1389709.9666666666, standard deviation: 977371.2625756391
+	average accesses:
+		average time: 100.7, standard deviation: 0.07745966692414945
+	standard deviation of accesses:
+		average time: 52.156011899999996, standard deviation: 11.232145419923215
+GATE:
+	elapsed time:
+		average time: 192398.53333333333, standard deviation: 83369.07109063621
+	average accesses:
+		average time: 118.43333333333332, standard deviation: 10.41195893618914
+	standard deviation of accesses:
+		average time: 189.83488939999998, standard deviation: 38.47940663962678
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 3000000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 45407532.36666667, standard deviation: 9467900.26642012
+	average accesses:
+		average time: 3000.8799999999987, standard deviation: 0.06000000000008186
+	standard deviation of accesses:
+		average time: 1003.9620208333332, standard deviation: 509.4977489719744
+GATE:
+	elapsed time:
+		average time: 4163485.0, standard deviation: 170595.45662043092
+	average accesses:
+		average time: 3651.3233333333337, standard deviation: 155.35739802861724
+	standard deviation of accesses:
+		average time: 3915.784945300001, standard deviation: 489.7874164185162
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 10000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 68448.06666666667, standard deviation: 114193.84910929116
+	average accesses:
+		average time: 20.59333333333334, standard deviation: 0.08137703743822498
+	standard deviation of accesses:
+		average time: 10.685378966666663, standard deviation: 2.9828421140230614
+GATE:
+	elapsed time:
+		average time: 50308.86666666667, standard deviation: 75246.18038976389
+	average accesses:
+		average time: 20.53333333333334, standard deviation: 0.10749676997731522
+	standard deviation of accesses:
+		average time: 28.244523133333335, standard deviation: 7.123031292743868
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 100000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 689851.6333333333, standard deviation: 877348.1536902548
+	average accesses:
+		average time: 200.5933333333334, standard deviation: 0.03590109871422798
+	standard deviation of accesses:
+		average time: 102.43495793333334, standard deviation: 11.371283015185792
+GATE:
+	elapsed time:
+		average time: 262033.56666666668, standard deviation: 20304.64598178347
+	average accesses:
+		average time: 200.56000000000003, standard deviation: 0.09521904571390165
+	standard deviation of accesses:
+		average time: 205.0841169666667, standard deviation: 72.00219186379132
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 3000000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 18881017.066666666, standard deviation: 1627701.4181393124
+	average accesses:
+		average time: 6000.799999999998, standard deviation: 1.8189894035458565e-12
+	standard deviation of accesses:
+		average time: 1052.6623498666668, standard deviation: 519.7869859248823
+GATE:
+	elapsed time:
+		average time: 7327115.933333334, standard deviation: 778727.1128209133
+	average accesses:
+		average time: 6000.793333333332, standard deviation: 0.035901098714197374
+	standard deviation of accesses:
+		average time: 2958.649384166666, standard deviation: 1019.1076474420297
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 10000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 143567.43333333332, standard deviation: 103889.00795486284
+	average accesses:
+		average time: 13.1375, standard deviation: 0.04947642536265799
+	standard deviation of accesses:
+		average time: 7.8012329000000005, standard deviation: 1.139552478960004
+GATE:
+	elapsed time:
+		average time: 102427.56666666667, standard deviation: 93543.79100851942
+	average accesses:
+		average time: 13.0875, standard deviation: 0.09213893494789992
+	standard deviation of accesses:
+		average time: 22.96575706666666, standard deviation: 4.954327431766173
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 100000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 211372.53333333333, standard deviation: 531923.174622472
+	average accesses:
+		average time: 125.65, standard deviation: 0.05951190357119041
+	standard deviation of accesses:
+		average time: 67.57276989999998, standard deviation: 11.838977404928295
+GATE:
+	elapsed time:
+		average time: 169004.56666666668, standard deviation: 165578.24607652688
+	average accesses:
+		average time: 125.6625, standard deviation: 0.057282196186947985
+	standard deviation of accesses:
+		average time: 158.01678226666667, standard deviation: 43.4532337982612
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 3000000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 40157025.86666667, standard deviation: 19987593.52990338
+	average accesses:
+		average time: 3750.85, standard deviation: 0.05951190357119042
+	standard deviation of accesses:
+		average time: 1346.0546554, standard deviation: 452.57833221024924
+GATE:
+	elapsed time:
+		average time: 8523857.0, standard deviation: 2330075.039059629
+	average accesses:
+		average time: 3750.6833333333334, standard deviation: 0.10573814617041268
+	standard deviation of accesses:
+		average time: 3407.8638116999996, standard deviation: 1025.6700272393623
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 10000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 267197.23333333334, standard deviation: 210802.86900461977
+	average accesses:
+		average time: 10.703333333333335, standard deviation: 0.07520342781785679
+	standard deviation of accesses:
+		average time: 6.264937833333334, standard deviation: 1.5275973117662276
+GATE:
+	elapsed time:
+		average time: 196238.5, standard deviation: 259570.48520761498
+	average accesses:
+		average time: 10.643333333333334, standard deviation: 0.17451520150277902
+	standard deviation of accesses:
+		average time: 21.02035436666667, standard deviation: 4.043558761858928
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 100000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 1222752.7666666666, standard deviation: 2578603.050023787
+	average accesses:
+		average time: 100.71999999999997, standard deviation: 0.05416025603090595
+	standard deviation of accesses:
+		average time: 47.548900999999994, standard deviation: 8.403611495580428
+GATE:
+	elapsed time:
+		average time: 365866.9, standard deviation: 243460.69578289223
+	average accesses:
+		average time: 100.71000000000002, standard deviation: 0.10440306508910438
+	standard deviation of accesses:
+		average time: 184.09213010000002, standard deviation: 60.34552711151953
+---------------------------------------------------
+SCHEDULER: SCHED_OTHER
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 3000000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 71498459.63333334, standard deviation: 30189581.244692635
+	average accesses:
+		average time: 3000.886666666666, standard deviation: 0.056174331821201975
+	standard deviation of accesses:
+		average time: 808.7102701999999, standard deviation: 491.17046209124373
+GATE:
+	elapsed time:
+		average time: 9182526.766666668, standard deviation: 1900724.0132816175
+	average accesses:
+		average time: 3000.69, standard deviation: 0.09780933834088494
+	standard deviation of accesses:
+		average time: 2989.9592112666664, standard deviation: 575.5548507457729
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 10000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 10452.866666666667, standard deviation: 20492.70813685254
+	average accesses:
+		average time: 20.799999999999994, standard deviation: 7.105427357601002e-15
+	standard deviation of accesses:
+		average time: 2.7316027666666676, standard deviation: 2.367490860779835
+GATE:
+	elapsed time:
+		average time: 10297.1, standard deviation: 3543.4570911281917
+	average accesses:
+		average time: 24.653333333333332, standard deviation: 3.5311691485336065
+	standard deviation of accesses:
+		average time: 24.226555633333337, standard deviation: 5.526120052381462
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 100000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 114598.66666666667, standard deviation: 244929.6364407995
+	average accesses:
+		average time: 200.80000000000007, standard deviation: 5.684341886080802e-14
+	standard deviation of accesses:
+		average time: 3.3489814333333334, standard deviation: 3.2737832218079403
+GATE:
+	elapsed time:
+		average time: 19668.333333333332, standard deviation: 27306.877925208188
+	average accesses:
+		average time: 250.36, standard deviation: 19.465483982338238
+	standard deviation of accesses:
+		average time: 174.31866186666667, standard deviation: 41.68160358070207
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 3000000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 589396.7, standard deviation: 3129323.481495078
+	average accesses:
+		average time: 6000.799999999998, standard deviation: 1.8189894035458565e-12
+	standard deviation of accesses:
+		average time: 13.71784013333333, standard deviation: 55.43627748587079
+GATE:
+	elapsed time:
+		average time: 275738.73333333334, standard deviation: 980921.6571371686
+	average accesses:
+		average time: 7389.58, standard deviation: 163.98826258810922
+	standard deviation of accesses:
+		average time: 2810.720939, standard deviation: 601.5257517715019
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 10000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 309754.0, standard deviation: 1357354.817216756
+	average accesses:
+		average time: 13.379166666666666, standard deviation: 0.022438186696393764
+	standard deviation of accesses:
+		average time: 2.6679003333333333, standard deviation: 2.4153405261524417
+GATE:
+	elapsed time:
+		average time: 23834.133333333335, standard deviation: 13507.67122967127
+	average accesses:
+		average time: 14.408333333333333, standard deviation: 1.2661183023539133
+	standard deviation of accesses:
+		average time: 25.371043200000006, standard deviation: 4.252298256515562
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 100000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 47229.5, standard deviation: 101309.86185979132
+	average accesses:
+		average time: 125.875, standard deviation: 0.0
+	standard deviation of accesses:
+		average time: 3.4262036333333343, standard deviation: 2.4840498826168327
+GATE:
+	elapsed time:
+		average time: 37297.26666666667, standard deviation: 21091.797334403615
+	average accesses:
+		average time: 154.02916666666667, standard deviation: 10.609630223161513
+	standard deviation of accesses:
+		average time: 171.00527143333335, standard deviation: 19.94854769123372
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 3000000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 3741535.1333333333, standard deviation: 11149682.676316265
+	average accesses:
+		average time: 3750.875, standard deviation: 0.0
+	standard deviation of accesses:
+		average time: 3.6495121333333325, standard deviation: 3.092804043191375
+GATE:
+	elapsed time:
+		average time: 258454.73333333334, standard deviation: 957472.1594440901
+	average accesses:
+		average time: 5716.7375, standard deviation: 173.9628353209865
+	standard deviation of accesses:
+		average time: 4300.710512566667, standard deviation: 681.7906967612587
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 10000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 454816.23333333334, standard deviation: 866156.0439114376
+	average accesses:
+		average time: 10.899999999999997, standard deviation: 3.552713678800501e-15
+	standard deviation of accesses:
+		average time: 2.6920312, standard deviation: 1.1872801733723568
+GATE:
+	elapsed time:
+		average time: 51121.76666666667, standard deviation: 39103.433918846
+	average accesses:
+		average time: 12.023333333333333, standard deviation: 1.4730203287425767
+	standard deviation of accesses:
+		average time: 22.72009356666667, standard deviation: 3.227540384651256
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 100000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 191541.3, standard deviation: 434933.35185153363
+	average accesses:
+		average time: 100.90000000000003, standard deviation: 2.842170943040401e-14
+	standard deviation of accesses:
+		average time: 2.6640795666666666, standard deviation: 1.2217529708666064
+GATE:
+	elapsed time:
+		average time: 37556.73333333333, standard deviation: 17459.776071365355
+	average accesses:
+		average time: 153.89333333333332, standard deviation: 19.397008933223585
+	standard deviation of accesses:
+		average time: 198.52293740000002, standard deviation: 19.74473715025129
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 3000000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 1551957.7, standard deviation: 7874330.604899874
+	average accesses:
+		average time: 3000.899999999999, standard deviation: 9.094947017729282e-13
+	standard deviation of accesses:
+		average time: 4.749335266666666, standard deviation: 13.6750557561055
+GATE:
+	elapsed time:
+		average time: 555629.3, standard deviation: 1185031.7276822352
+	average accesses:
+		average time: 3598.4399999999996, standard deviation: 76.32141071372651
+	standard deviation of accesses:
+		average time: 3470.8685279, standard deviation: 401.6182813650889
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 10000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 15074.633333333333, standard deviation: 29420.073518470723
+	average accesses:
+		average time: 20.799999999999994, standard deviation: 7.105427357601002e-15
+	standard deviation of accesses:
+		average time: 3.283217033333334, standard deviation: 1.5079187435414965
+GATE:
+	elapsed time:
+		average time: 10595.9, standard deviation: 9439.991939791757
+	average accesses:
+		average time: 20.79333333333333, standard deviation: 0.035901098714229904
+	standard deviation of accesses:
+		average time: 29.766500999999995, standard deviation: 9.012477348791926
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 100000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 69989.6, standard deviation: 330085.1128806629
+	average accesses:
+		average time: 200.80000000000007, standard deviation: 5.684341886080802e-14
+	standard deviation of accesses:
+		average time: 2.2009969333333337, standard deviation: 1.2092471673857235
+GATE:
+	elapsed time:
+		average time: 20243.5, standard deviation: 46642.62359384029
+	average accesses:
+		average time: 200.80000000000007, standard deviation: 5.684341886080802e-14
+	standard deviation of accesses:
+		average time: 151.4708032, standard deviation: 54.14039565647141
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 3000000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 1454236.6666666667, standard deviation: 5472324.430655942
+	average accesses:
+		average time: 6000.799999999998, standard deviation: 1.8189894035458565e-12
+	standard deviation of accesses:
+		average time: 2.548653600000001, standard deviation: 2.4298899821786253
+GATE:
+	elapsed time:
+		average time: 703914.1666666666, standard deviation: 2089277.280116581
+	average accesses:
+		average time: 6000.799999999998, standard deviation: 1.8189894035458565e-12
+	standard deviation of accesses:
+		average time: 3692.1764619000005, standard deviation: 1120.560461239611
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 10000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 100721.96666666666, standard deviation: 289341.2078974676
+	average accesses:
+		average time: 13.370833333333334, standard deviation: 0.022438186696393764
+	standard deviation of accesses:
+		average time: 2.2969211666666665, standard deviation: 1.3411309668565825
+GATE:
+	elapsed time:
+		average time: 33522.166666666664, standard deviation: 27893.339101039077
+	average accesses:
+		average time: 13.329166666666667, standard deviation: 0.10937003957005574
+	standard deviation of accesses:
+		average time: 23.429573933333334, standard deviation: 6.63052882400231
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 100000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 22498.133333333335, standard deviation: 8830.532383849923
+	average accesses:
+		average time: 125.875, standard deviation: 0.0
+	standard deviation of accesses:
+		average time: 2.0708558999999997, standard deviation: 1.2958643165561317
+GATE:
+	elapsed time:
+		average time: 21226.733333333334, standard deviation: 6635.697425959753
+	average accesses:
+		average time: 125.875, standard deviation: 0.0
+	standard deviation of accesses:
+		average time: 144.28023230000002, standard deviation: 42.46997717052835
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 3000000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 2341310.2, standard deviation: 8680334.064798467
+	average accesses:
+		average time: 3750.875, standard deviation: 0.0
+	standard deviation of accesses:
+		average time: 3.1074114333333336, standard deviation: 2.3101302182037657
+GATE:
+	elapsed time:
+		average time: 601969.7666666667, standard deviation: 1814120.4229244667
+	average accesses:
+		average time: 3750.875, standard deviation: 0.0
+	standard deviation of accesses:
+		average time: 2866.1396895333332, standard deviation: 623.0146384939524
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 10000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 35711.8, standard deviation: 20836.53026041844
+	average accesses:
+		average time: 10.899999999999997, standard deviation: 3.552713678800501e-15
+	standard deviation of accesses:
+		average time: 2.8058658666666667, standard deviation: 1.4641661861298336
+GATE:
+	elapsed time:
+		average time: 45599.96666666667, standard deviation: 17742.51956644139
+	average accesses:
+		average time: 10.866666666666665, standard deviation: 0.10434983894999024
+	standard deviation of accesses:
+		average time: 20.334217033333335, standard deviation: 5.620583245456563
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 100000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 85232.23333333334, standard deviation: 173305.1057800824
+	average accesses:
+		average time: 100.90000000000003, standard deviation: 2.842170943040401e-14
+	standard deviation of accesses:
+		average time: 2.7199219, standard deviation: 1.7847570485343442
+GATE:
+	elapsed time:
+		average time: 61751.73333333333, standard deviation: 65491.3232496913
+	average accesses:
+		average time: 100.90000000000003, standard deviation: 2.842170943040401e-14
+	standard deviation of accesses:
+		average time: 151.62707126666663, standard deviation: 57.950737286938946
+---------------------------------------------------
+SCHEDULER: SCHED_FIFO
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 3000000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 3340587.433333333, standard deviation: 12418393.53056789
+	average accesses:
+		average time: 3000.899999999999, standard deviation: 9.094947017729282e-13
+	standard deviation of accesses:
+		average time: 2.914658766666667, standard deviation: 2.2937810459812953
+GATE:
+	elapsed time:
+		average time: 2543202.5, standard deviation: 7291278.845504862
+	average accesses:
+		average time: 3000.899999999999, standard deviation: 9.094947017729282e-13
+	standard deviation of accesses:
+		average time: 2357.245273933333, standard deviation: 891.3375464047076
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 10000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 9700.4, standard deviation: 14377.14151607799
+	average accesses:
+		average time: 20.799999999999994, standard deviation: 7.105427357601002e-15
+	standard deviation of accesses:
+		average time: 1.6416400999999998, standard deviation: 0.6720745796945627
+GATE:
+	elapsed time:
+		average time: 15294.8, standard deviation: 19428.0503695044
+	average accesses:
+		average time: 23.686666666666664, standard deviation: 4.007886669499969
+	standard deviation of accesses:
+		average time: 25.739659466666662, standard deviation: 6.237141182138233
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 100000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 87376.0, standard deviation: 228012.10608985947
+	average accesses:
+		average time: 200.80000000000007, standard deviation: 5.684341886080802e-14
+	standard deviation of accesses:
+		average time: 4.0377169, standard deviation: 3.402475854192888
+GATE:
+	elapsed time:
+		average time: 16322.866666666667, standard deviation: 28690.325830301907
+	average accesses:
+		average time: 244.84666666666666, standard deviation: 12.946215234148124
+	standard deviation of accesses:
+		average time: 202.8395957666667, standard deviation: 39.75789706080242
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 3000000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 1654554.9666666666, standard deviation: 6115717.2616835525
+	average accesses:
+		average time: 6000.799999999998, standard deviation: 1.8189894035458565e-12
+	standard deviation of accesses:
+		average time: 3.0258051666666663, standard deviation: 2.173592328901383
+GATE:
+	elapsed time:
+		average time: 391925.5, standard deviation: 1122579.593617746
+	average accesses:
+		average time: 7531.726666666667, standard deviation: 130.69006066092237
+	standard deviation of accesses:
+		average time: 3107.0246331, standard deviation: 627.1811403309662
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 10000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 49774.666666666664, standard deviation: 129883.59872037562
+	average accesses:
+		average time: 13.379166666666666, standard deviation: 0.022438186696393768
+	standard deviation of accesses:
+		average time: 2.6580904666666663, standard deviation: 1.0501356237871924
+GATE:
+	elapsed time:
+		average time: 31203.466666666667, standard deviation: 36116.08010635829
+	average accesses:
+		average time: 13.995833333333334, standard deviation: 1.0515283189508287
+	standard deviation of accesses:
+		average time: 26.510765033333332, standard deviation: 4.97437790234713
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 100000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 21734.066666666666, standard deviation: 25263.040697078057
+	average accesses:
+		average time: 125.87916666666666, standard deviation: 0.022438186696393768
+	standard deviation of accesses:
+		average time: 3.027538566666666, standard deviation: 1.398715616539371
+GATE:
+	elapsed time:
+		average time: 19981.866666666665, standard deviation: 8814.988189567937
+	average accesses:
+		average time: 159.77083333333334, standard deviation: 13.028977453055257
+	standard deviation of accesses:
+		average time: 176.64916203333325, standard deviation: 24.701300743311617
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 3000000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 3167008.2333333334, standard deviation: 9884702.541339172
+	average accesses:
+		average time: 3750.875, standard deviation: 0.0
+	standard deviation of accesses:
+		average time: 2.9149297000000005, standard deviation: 1.9843284989904464
+GATE:
+	elapsed time:
+		average time: 232498.8, standard deviation: 728283.9358632684
+	average accesses:
+		average time: 5861.325, standard deviation: 208.1580594364132
+	standard deviation of accesses:
+		average time: 4271.2732533, standard deviation: 625.9279800863897
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 10000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 29023.2, standard deviation: 27136.46534020229
+	average accesses:
+		average time: 10.899999999999997, standard deviation: 3.552713678800501e-15
+	standard deviation of accesses:
+		average time: 2.1954542666666668, standard deviation: 0.7979017406870319
+GATE:
+	elapsed time:
+		average time: 30529.733333333334, standard deviation: 17581.36311350428
+	average accesses:
+		average time: 12.23, standard deviation: 1.6004478539875433
+	standard deviation of accesses:
+		average time: 23.212654433333334, standard deviation: 3.328914353782493
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 100000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 117596.1, standard deviation: 339766.7479890039
+	average accesses:
+		average time: 100.91000000000003, standard deviation: 0.039581140290124134
+	standard deviation of accesses:
+		average time: 2.3921055, standard deviation: 1.0915576022417004
+GATE:
+	elapsed time:
+		average time: 42742.3, standard deviation: 55591.773398678335
+	average accesses:
+		average time: 125.14666666666668, standard deviation: 6.61567498865804
+	standard deviation of accesses:
+		average time: 165.6674024, standard deviation: 18.32020113099324
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 3000000
+SYNC: NO
+
+BAKERY:
+	elapsed time:
+		average time: 1927832.4, standard deviation: 7212563.063018608
+	average accesses:
+		average time: 3000.899999999999, standard deviation: 9.094947017729282e-13
+	standard deviation of accesses:
+		average time: 3.4770662333333333, standard deviation: 2.6127910694302834
+GATE:
+	elapsed time:
+		average time: 111652.43333333333, standard deviation: 200639.42015677167
+	average accesses:
+		average time: 3838.3400000000006, standard deviation: 75.12114926348414
+	standard deviation of accesses:
+		average time: 3576.5634199000006, standard deviation: 504.6828978587535
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 10000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 18079.0, standard deviation: 26139.836019633585
+	average accesses:
+		average time: 20.799999999999994, standard deviation: 7.105427357601002e-15
+	standard deviation of accesses:
+		average time: 2.3990900333333323, standard deviation: 1.5025646950230902
+GATE:
+	elapsed time:
+		average time: 11382.566666666668, standard deviation: 9744.792621988196
+	average accesses:
+		average time: 20.79333333333333, standard deviation: 0.035901098714229904
+	standard deviation of accesses:
+		average time: 30.09131896666667, standard deviation: 7.4086788784107505
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 100000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 72970.4, standard deviation: 191763.4464949981
+	average accesses:
+		average time: 200.80000000000007, standard deviation: 5.684341886080802e-14
+	standard deviation of accesses:
+		average time: 2.325616566666667, standard deviation: 1.3434435095073824
+GATE:
+	elapsed time:
+		average time: 17605.733333333334, standard deviation: 42779.149396197936
+	average accesses:
+		average time: 200.80000000000007, standard deviation: 5.684341886080802e-14
+	standard deviation of accesses:
+		average time: 160.65606789999998, standard deviation: 76.2479367163335
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 5
+NUMBER OF ACCESS: 3000000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 1457505.9333333333, standard deviation: 5469151.552204814
+	average accesses:
+		average time: 6000.799999999998, standard deviation: 1.8189894035458565e-12
+	standard deviation of accesses:
+		average time: 3.5805294999999995, standard deviation: 4.9604914456338
+GATE:
+	elapsed time:
+		average time: 337724.13333333336, standard deviation: 1252281.064229239
+	average accesses:
+		average time: 6000.799999999998, standard deviation: 1.8189894035458565e-12
+	standard deviation of accesses:
+		average time: 3246.2484123000004, standard deviation: 1103.9521209074771
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 10000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 21484.133333333335, standard deviation: 18472.339941533006
+	average accesses:
+		average time: 13.375, standard deviation: 0.0
+	standard deviation of accesses:
+		average time: 1.7080675333333333, standard deviation: 1.151179122313052
+GATE:
+	elapsed time:
+		average time: 23084.633333333335, standard deviation: 17720.0710617148
+	average accesses:
+		average time: 13.333333333333334, standard deviation: 0.13437096247164249
+	standard deviation of accesses:
+		average time: 21.75089856666667, standard deviation: 5.791019669407054
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 100000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 21199.6, standard deviation: 20820.940037375833
+	average accesses:
+		average time: 125.875, standard deviation: 0.0
+	standard deviation of accesses:
+		average time: 2.7266972666666662, standard deviation: 1.4081298154265212
+GATE:
+	elapsed time:
+		average time: 30652.266666666666, standard deviation: 49404.59857201779
+	average accesses:
+		average time: 125.875, standard deviation: 0.0
+	standard deviation of accesses:
+		average time: 160.27524823333331, standard deviation: 58.59219937665094
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 8
+NUMBER OF ACCESS: 3000000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 2633236.1666666665, standard deviation: 13547363.696320716
+	average accesses:
+		average time: 3750.875, standard deviation: 0.0
+	standard deviation of accesses:
+		average time: 2.0903921666666663, standard deviation: 1.5804965343792878
+GATE:
+	elapsed time:
+		average time: 696343.2666666667, standard deviation: 2114787.824281811
+	average accesses:
+		average time: 3750.875, standard deviation: 0.0
+	standard deviation of accesses:
+		average time: 3127.0032688666665, standard deviation: 621.4424276928099
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 10000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 27057.9, standard deviation: 30622.952282397593
+	average accesses:
+		average time: 10.899999999999997, standard deviation: 3.552713678800501e-15
+	standard deviation of accesses:
+		average time: 2.2230631333333335, standard deviation: 0.5549679354989039
+GATE:
+	elapsed time:
+		average time: 23658.266666666666, standard deviation: 11403.496106993776
+	average accesses:
+		average time: 10.85333333333333, standard deviation: 0.13597385369580764
+	standard deviation of accesses:
+		average time: 21.2405429, standard deviation: 5.472294003692987
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 100000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 46357.36666666667, standard deviation: 124987.06581708985
+	average accesses:
+		average time: 100.90000000000003, standard deviation: 2.842170943040401e-14
+	standard deviation of accesses:
+		average time: 2.6406774333333334, standard deviation: 0.9000864517144889
+GATE:
+	elapsed time:
+		average time: 32275.433333333334, standard deviation: 14385.465854311271
+	average accesses:
+		average time: 100.90000000000003, standard deviation: 2.842170943040401e-14
+	standard deviation of accesses:
+		average time: 137.11223376666666, standard deviation: 37.917260885759056
+---------------------------------------------------
+SCHEDULER: SCHED_RR
+NUMBER OF THREADS: 10
+NUMBER OF ACCESS: 3000000
+SYNC: YES
+
+BAKERY:
+	elapsed time:
+		average time: 808849.0, standard deviation: 3807895.0095693115
+	average accesses:
+		average time: 3000.899999999999, standard deviation: 9.094947017729282e-13
+	standard deviation of accesses:
+		average time: 2.5974557333333332, standard deviation: 1.167571648030873
+GATE:
+	elapsed time:
+		average time: 1372851.3333333333, standard deviation: 5320951.416443406
+	average accesses:
+		average time: 3000.899999999999, standard deviation: 9.094947017729282e-13
+	standard deviation of accesses:
+		average time: 2600.6534547, standard deviation: 891.8374657309107
+---------------------------------------------------

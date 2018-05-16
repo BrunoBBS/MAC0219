@@ -1,0 +1,56 @@
+Para poder avaliar a diferença entre os algoritmos de controle de acesso a
+seção crítica Bakery e Gate foram feitos testes variando número de threads,
+número de entradas na seção crítica, escalonadores, e uso do
+__sync_synchronize(). 
+Os valores usados foram:
+
+Número de threads:        5, 8, 10
+Número de entradas na SC: 10000, 100000, 100000
+Escalonadores:            SCHED_OTHER, SCHED_RR, SCHED_FIFO
+
+************************************************
+Número de acessos
+************************************************
+
+Variando o número de acessos, além das diferenças já esperadas como aumento no
+tempo de execução e na média de acessos à cessão crítica, é possível perceber
+uma grande diferença no desvio padrão da quantidade de acessos à sessão crítica
+no algoritmo Gate, passando de menos de 1 para 20 e chegando a mais de 800
+acessos, enquanto que o Bakery tem um desvio padrão máximo de 1.8 acessos, o que
+evidencía significativamente que o Gate é muito menos consistente que o Bakery
+em termos de quantos acessos à sessão crítica cada thread faz.
+
+************************************************
+Número de Theads
+************************************************
+
+Ao fazer os testes variando a quantidade de threads, o número de entradas de
+cada thread na seção crítica diminuiu, já que tem mais threads para o mesmo
+número de acessos. Algo que era esperado é  que os tempos de execução
+aumentassem, porém o que ocorreu foi que, em ambos os algoritmos, de 5 para 8
+threads o tempo de execução aumentou , mas de 8 para 10 threads o tempo de
+execução diminuiu.
+
+************************************************
+Uso do __sync_synchronize()
+************************************************
+
+A diferença quando o __sync_synchronize() é usado é que o Gate torna-se mais
+justo com seu desvio padrão da quantidade de acessos das threads à seção
+crítica passando de cerca 30 para próximo de 0, enquanto que o Bakery é justo
+com ambas as configurações.
+
+************************************************
+Troca de escalonadores
+************************************************
+
+Quando trocamos os escalonadores, podemos notar algumas particularidades de cada
+algoritmo em cada escalonador, dentre elas, ambos o Bakery e o Gate se tornam
+mais justos usando o SCHED_FIFO; com o SCHED_OTHER os algoritmos ficam muito
+mais lentos e com o SCHED_RR eles ficam significativamente mais rápidos, com o
+SCHED_FIFO sendo o que os deixa com a velocidade intermediária; 
+
+Em conclusão, há varias mudanças que ocorrem quando trocamos cada um desses
+ítens e a cada um que é trocado, características diferentes de cada algoritmo
+são evidenciadas ou tornam-se mais sutis. Assim, não há um melhor que o
+outro, mas um mais apropriado que o outro para cada aplicação.
