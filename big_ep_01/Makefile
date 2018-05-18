@@ -1,7 +1,7 @@
 all:
-	g++ src/main.cpp -o main -lpthread
+	gcc src/main.cpp -o main -lpthread -lstdc++
 
 gdb: debug
 
 debug:
-	g++ src/main.cpp -O0 -g -o main -lpthread
+	gcc src/main.cpp -O0 -g -o main -lpthread -lstdc++
