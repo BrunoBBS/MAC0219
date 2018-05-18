@@ -1,8 +1,9 @@
 #include <fstream>
-#include <iosream>
+#include <iostream>
 #include <string>
 
 #include "typedef.hpp"
+#include <pthread.h>
 #include <stdarg.h>
 #include <stdlib.h>
 
@@ -11,7 +12,7 @@
 using namespace std;
 
 // Read matrix B from file in the right format (transpose)
-void loadB(mat M, std::ifstream &M_file)
+void loadB(mat &M, std::ifstream &M_file)
 {
     uint64_t i, j;
     double val;
@@ -34,85 +35,113 @@ struct worker_args_t
     vector<double> &row;
     // place in a line of the C matrix where the worker shourld put the result
     double &place;
-    pthread_barrier_t &mult_barrier;
+    pthread_barrier_t &red_barrier;
 };
 
 struct prepper_args_t
 {
-    uint64_t column;
-    mat &B;
+    prepper_args_t(mat *B, double value_from_a, uint64_t column)
+        : B(B), value_from_a(value_from_a), column(column)
+    {
+    }
+    mat *B;
     double value_from_a;
-    pthread_barrier_t &prep_barrier;
+    uint64_t column;
 };
-
-vector<double> generate_c_line(mat B, ifstream &file_A, uint64_t n_lines_a)
-{
-    vector<pthread_t> workers(B.size());
-    vector<double> line_c;
-    uint64_t i = 0;
-
-    pthread_barrier_t barrier;
-    pthread_barrier_init(&barrier, NULL, B.size() + 1);
-
-    prep_b_lines(file_A, B);
-
-    for (auto worker : workers)
-    {
-        worker_args_t args{i, B[i], line_c[i], barrier};
-        pthread_create(&worker, NULL, &reduce, (void *)&args);
-    }
-    pthread_barrier_wait(&barrier);
-}
-
-void prep_b_lines(ifstream &file_A, mat B)
-{
-    vector<pthread_t> preppers(B[0].size() / 2);
-    vector<double> line_A; // TODO: load row from file
-    pthread_barrier_t barrier;
-    pthread_barrier_init(&barrier, NULL, B[0].size() / 2 + 1);
-    uint64_t i;
-    for (auto prepper : preppers)
-    {
-        prepper_args_t args{i * 2, B, line_A[i++], barrier};
-        pthread_create(&prepper, NULL, &prep, (void *)&args);
-    }
-    pthread_barrier_wait(&barrier);
-}
 
 void *prep(void *args_p)
 {
     prepper_args_t &args = *((prepper_args_t *)args_p);
-    for (uint64_t i = 0; i < args.B.size(); i++)
+    for (uint64_t i = 0; i < args.B->size(); i++)
     {
-        args.B[i][args.column] = args.value_from_a;
+        (*args.B)[i][args.column] = args.value_from_a;
     }
-    pthread_barrier_wait(&args.prep_barrier);
+    return NULL;
 }
 
 void *reduce(void *args_p)
 {
+    double sum          = 0;
     worker_args_t &args = *((worker_args_t *)args_p);
-    for (uint64_t i = 0; i < args.row.size(); i++) {}
-    TODO: all
+    for (uint64_t i = 0; i < args.row.size(); i += 2)
+    {
+        sum += args.row[i] * args.row[i + 1];
+    }
+    args.place = sum;
+    return NULL;
 }
-// Read one row from given file to a vector
-bool loadRow(double *row, uint64_t l, uint64_t c, std::ifstream &M_file,
-             std::string M_name = "[?]")
+
+// Reads and returns next row of a matrix from a given file
+vector<double> loadRow(ifstream &file_M, uint64_t M_size, uint64_t line_no)
 {
 
-    uint64_t i, j;
-    double val;
+    static uint64_t i, j;
+    static double val;
+    static bool last = false;
 
-    while (M_file >> i >> j >> val)
+    vector<double> M_line(M_size);
+
+    if (last && line_no == i) M_line[j] = val;
+
+    while (file_M >> i >> j >> val)
     {
         i--;
         j--;
 
-        if (i < 0 || i >= l || j < 0 || j >= c)
-            error(format("Invalid coordinates (%lld, %lld) in matrix %s", i, j,
-                         M_name.c_str()));
+        if (i < 0 || i >= M_size)
+            error(format("Invalid coordinates (%lld, %lld) in matrix", i, j));
 
-        // TODO: Must be made
+        if (i != line_no)
+        {
+            last = true;
+            break;
+        }
+
+        M_line[j] = val;
+    }
+    return M_line;
+}
+
+void prep_b_lines(ifstream &file_A, mat *B)
+{
+    static uint64_t A_line = 0;
+    vector<pthread_t> preppers((*B)[0].size() / 2);
+    vector<double> line_A = loadRow(file_A, (*B)[0].size() / 2, A_line);
+    A_line++;
+    uint64_t i = 0;
+    vector<prepper_args_t> args;
+    for (auto &prepper : preppers)
+    {
+        args.push_back(prepper_args_t(B, line_A[i], i * 2 + 1));
+        pthread_create(&prepper, NULL, &prep, (void *)&args[i]);
+    }
+    void **ret;
+    for (auto &prepper : preppers)
+    {
+        pthread_join(prepper, (void **)&ret);
+    }
+}
+
+void generate_next_C_line(mat *B, ifstream &file_A, uint64_t n_lines_a,
+                          vector<double> &line_C)
+{
+    vector<pthread_t> workers(B->size());
+    uint64_t i = 0;
+
+    pthread_barrier_t barrier;
+    pthread_barrier_init(&barrier, NULL, B->size());
+
+    prep_b_lines(file_A, B);
+
+    for (auto &worker : workers)
+    {
+        worker_args_t args{i, (*B)[i], line_C[i], barrier};
+        pthread_create(&worker, NULL, &reduce, (void *)&args);
+    }
+    char *ret;
+    for (auto &worker : workers)
+    {
+        pthread_join(worker, (void **)&ret);
     }
 }
 
@@ -162,10 +191,11 @@ int main(int argc, char **argv)
             p = tmp_pa;
             n = tmp_n;
         }
-        else if (!A_file.is_open())
-            error(format("File '%s' couldn't be opened!", argv[2]));
+        else
+            throw std::string("Values couldn't be read! Maybe wrong format?");
 
-        throw std::string("Values couldn't be read! Maybe wrong format?");
+        if (!A_file.is_open())
+            error(format("File '%s' couldn't be opened!", argv[2]));
     }
     catch (std::string e)
     {
@@ -173,44 +203,39 @@ int main(int argc, char **argv)
     }
 
     // Allocate Matrices (A will be loaded on the fly)
-    double **B;
-    double **C;
+    mat B(n);
+    mat C(m);
 
     // A = new double*[m];
     // for (uint64_t i = 0; i < m; i++) A[i] = new double[p];
 
-    B = new double *[n];
     for (uint64_t i = 0; i < p; i++)
-        B[i] = new double[2 * p];
+        B[i].resize(p * 2, 0);
 
-    C = new double *[m];
     for (uint64_t i = 0; i < m; i++)
-        C[i] = new double[n];
+        C[i].resize(n, 0);
 
     // Load B from file
-    loadB(B, p, n, B_file);
+    loadB(B, B_file);
 
-    // TODO: Do things here
+    // Now the modified B is loaded, C is created. Now we just load the computed
+    // values into C
 
-    // Allocate enough space for one row from A
-    double *A = new double[p];
+    for (uint64_t line = 0; line < C.size(); line++)
+    {
+        generate_next_C_line(&B, A_file, m, C[line]);
+    }
 
-    while (loadRow(A, m, p, A_file, "A")) {}
-
-    // Deallocate Matrices
-    // for (uint64_t i = 0; i < m; i++) delete A[i];
-    // delete A;
-
-    for (uint64_t i = 0; i < p; i++)
-        delete B[i];
-    delete B;
-
-    for (uint64_t i = 0; i < m; i++)
-        delete C[i];
-    delete C;
+    for (auto line : C)
+    {
+        for (auto item : line)
+            cout << item << endl;
+        cout << endl;
+    }
 
     // Close Matrix Files
     A_file.close();
     B_file.close();
     C_file.close();
+    return 0;
 }
