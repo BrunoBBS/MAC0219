@@ -96,6 +96,9 @@ void prep_b_lines(ifstream &file_A, mat &B)
     {
         pthread_join(preppers[i], (void **)&ret);
     }
+    delete line_A;
+    delete preppers;
+    delete args;
 }
 
 /*********************************************************************
@@ -122,12 +125,13 @@ void generate_next_C_line(mat &B, ifstream &file_A, uint64_t n_lines_a,
     {
         pthread_join(workers[i], (void **)&ret);
     }
+    delete workers;
 }
 
-    /**********************************************
-     * Load B in the right format for computation *
-     **********************************************/
-    void loadB(mat &M, std::ifstream &M_file)
+/**********************************************
+ * Load B in the right format for computation *
+ **********************************************/
+void loadB(mat &M, std::ifstream &M_file)
 {
     uint64_t row, col;
     double val;
