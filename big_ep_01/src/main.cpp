@@ -10,25 +10,7 @@
 #include "util.hpp"
 
 using namespace std;
-
-// Read matrix B from file in the right format (transpose)
-void loadB(mat &M, std::ifstream &M_file)
-{
-    uint64_t i, j;
-    double val;
-
-    while (M_file >> i >> j >> val)
-    {
-        i--;
-        j--;
-
-        if (i < 0 || i >= M.size() || j < 0 || j >= M[0].size())
-            error(format("Invalid coordinates (%lld, %lld) in matrix B", i, j));
-
-        M[j][i * 2] = val;
-    }
-}
-
+/*
 struct worker_args_t
 {
     uint64_t line;
@@ -144,9 +126,50 @@ void generate_next_C_line(mat *B, ifstream &file_A, uint64_t n_lines_a,
         pthread_join(worker, (void **)&ret);
     }
 }
+*/
 
+
+
+/**********************************************
+ * Load B in the right format for computation *
+ **********************************************/
+void loadB(mat &M, std::ifstream &M_file)
+{
+    uint64_t row, col;
+    double val;
+
+    // Read remaining lines from file
+    while (M_file >> row >> col >> val)
+    {
+        row--;
+        col--;
+
+        if (M.valid(row, col))
+            error(format("Invalid coordinates (%lld, %lld) in matrix B",
+                         row + 1, col + 1));
+
+        M[row][col * 2] = val;
+    }
+}
+
+/******************************************************
+ * Reads matrix dimensions from file and returns them *
+ ******************************************************/
+dim readDimensions(std::ifstream &matrix_file)
+{
+    dim dimensions;
+    if (!(matrix_file >> dimensions.first >> dimensions.second))
+        error(format("Values couldn't be read! Maybe wrong format?"));
+
+    return dimensions;
+}
+
+/******************************
+ * Entry point of the program *
+ ******************************/
 int main(int argc, char **argv)
 {
+    // Print help if wrong number of arguments
     if (argc != 5)
     {
         std::cout << "Usage:" << std::endl;
@@ -157,6 +180,9 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    /*****************
+     * File loading  *
+     *****************/
     std::ifstream A_file, B_file;
     std::ofstream C_file;
 
@@ -175,67 +201,36 @@ int main(int argc, char **argv)
         error(format("File '%s' couldn't be opened!", argv[4]));
 
     // Read matrix dimensions
-    try
-    {
-        // Temporary variables for matrix dimensions
-        uint64_t tmp_m, tmp_pa, tmp_pb, tmp_n;
+    dim a_dimensions = readDimensions(A_file);
+    dim b_dimensions = readDimensions(B_file);
 
-        // Try reading values from files
-        if (A_file >> tmp_m >> tmp_pa && B_file >> tmp_pb >> tmp_n)
-        {
-            // Check if they can be multiplied
-            if (tmp_pa != tmp_pb)
-                throw std::string("Can't multiply! Incompatible sizes!");
-
-            m = tmp_m;
-            p = tmp_pa;
-            n = tmp_n;
-        }
-        else
-            throw std::string("Values couldn't be read! Maybe wrong format?");
-
-        if (!A_file.is_open())
-            error(format("File '%s' couldn't be opened!", argv[2]));
-    }
-    catch (std::string e)
-    {
-        error(e);
-    }
+    // If the dimensions are incompatible, send error
+    if (a_dimensions.second != b_dimensions.first)
+        error(format("Matrices of dimensions "
+                     "%llux%llu and %llux%llu can't be multiplied",
+                     a_dimensions.first, a_dimensions.second,
+                     b_dimensions.first, a_dimensions.second));
+    
+    // Read values
+    m = a_dimensions.first;
+    p = b_dimensions.first;
+    n = b_dimensions.second;
 
     // Allocate Matrices (A will be loaded on the fly)
-    mat B(n);
-    mat C(m);
-
-    // A = new double*[m];
-    // for (uint64_t i = 0; i < m; i++) A[i] = new double[p];
-
-    for (uint64_t i = 0; i < p; i++)
-        B[i].resize(p * 2, 0);
-
-    for (uint64_t i = 0; i < m; i++)
-        C[i].resize(n, 0);
+    mat B(m, p * 2);
+    mat C(m, n);
 
     // Load B from file
     loadB(B, B_file);
 
     // Now the modified B is loaded, C is created. Now we just load the computed
     // values into C
-
-    for (uint64_t line = 0; line < C.size(); line++)
-    {
-        generate_next_C_line(&B, A_file, m, C[line]);
-    }
-
-    for (auto line : C)
-    {
-        for (auto item : line)
-            cout << item << endl;
-        cout << endl;
-    }
+    // TODO: DO THINGS
 
     // Close Matrix Files
     A_file.close();
     B_file.close();
     C_file.close();
+
     return 0;
 }
