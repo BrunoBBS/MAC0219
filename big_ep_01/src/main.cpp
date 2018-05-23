@@ -112,7 +112,7 @@ void generate_next_C_line(mat &B, ifstream &file_A, uint64_t n_lines_a,
     pthread_t *workers = new pthread_t[B.rows()];
 
     pthread_barrier_t barrier;
-    pthread_barrier_init(&barrier, NULL, B->size());
+    pthread_barrier_init(&barrier, NULL, B.rows());
 
     prep_b_lines(file_A, B);
 
@@ -185,6 +185,9 @@ int main(int argc, char **argv)
      *****************/
     std::ifstream A_file, B_file;
     std::ofstream C_file;
+
+    // Read execution mode
+    char exec_mode = argv[1][1];
 
     uint64_t m, p, n;
 
