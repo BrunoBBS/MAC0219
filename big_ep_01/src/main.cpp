@@ -2,12 +2,13 @@
 #include <iostream>
 #include <string>
 
-#include "typedef.hpp"
 #include <pthread.h>
 #include <stdarg.h>
 #include <stdlib.h>
 
+#include "typedef.hpp"
 #include "util.hpp"
+#include "methods.hpp"
 
 using namespace std;
 
@@ -131,7 +132,7 @@ void generate_next_C_line(mat &B, ifstream &file_A, uint64_t n_lines_a,
 /**********************************************
  * Load B in the right format for computation *
  **********************************************/
-void loadB(mat &M, std::ifstream &M_file)
+void load_B(mat &M, std::ifstream &M_file)
 {
     uint64_t row, col;
     double val;
@@ -146,14 +147,15 @@ void loadB(mat &M, std::ifstream &M_file)
             error(format("Invalid coordinates (%lld, %lld) in matrix B",
                          row + 1, col + 1));
 
-        M[row][col * 2] = val;
+        // Transpose and space M
+        M[col][row * 2] = val;
     }
 }
 
 /******************************************************
  * Reads matrix dimensions from file and returns them *
  ******************************************************/
-dim readDimensions(std::ifstream &matrix_file)
+dim read_dimensions(std::ifstream &matrix_file)
 {
     dim dimensions;
     if (!(matrix_file >> dimensions.first >> dimensions.second))
@@ -202,8 +204,8 @@ int main(int argc, char **argv)
         error(format("File '%s' couldn't be opened!", argv[4]));
 
     // Read matrix dimensions
-    dim a_dimensions = readDimensions(A_file);
-    dim b_dimensions = readDimensions(B_file);
+    dim a_dimensions = read_dimensions(A_file);
+    dim b_dimensions = read_dimensions(B_file);
 
     // If the dimensions are incompatible, send error
     if (a_dimensions.second != b_dimensions.first)
@@ -218,11 +220,11 @@ int main(int argc, char **argv)
     n = b_dimensions.second;
 
     // Allocate Matrices (A will be loaded on the fly)
-    mat B(m, p * 2);
+    mat M(n, 2 * p);
     mat C(m, n);
 
-    // Load B from file
-    loadB(B, B_file);
+    // Load B from file to M
+    load_B(M, B_file);
 
     // Now the modified B is loaded, C is created. Now we just load the computed
     // values into C

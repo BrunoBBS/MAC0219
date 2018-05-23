@@ -1,4 +1,5 @@
-#ifndef __TYPEDEF__HPP__
+#ifndef __TYPEDEF_HPP__
+#define __TYPEDEF_HPP__
 
 #include <iostream>
 
@@ -14,10 +15,10 @@ class Matrix
     Matrix(uint64_t rows, uint64_t cols);
     ~Matrix();
 
-    uint64_t rows() const;
-    uint64_t cols() const;
+    inline uint64_t rows() const;
+    inline uint64_t cols() const;
 
-    bool valid(uint64_t row, uint64_t col) const;
+    inline bool valid(uint64_t row, uint64_t col) const;
 
     double *&operator[](uint64_t row);
 
