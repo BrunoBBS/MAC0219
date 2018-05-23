@@ -15,10 +15,10 @@ class Matrix
     Matrix(uint64_t rows, uint64_t cols);
     ~Matrix();
 
-    inline uint64_t rows() const;
-    inline uint64_t cols() const;
+    uint64_t rows() const;
+    uint64_t cols() const;
 
-    inline bool valid(uint64_t row, uint64_t col) const;
+    bool valid(uint64_t row, uint64_t col) const;
 
     double *&operator[](uint64_t row);
 
