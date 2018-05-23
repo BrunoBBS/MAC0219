@@ -10,8 +10,9 @@
 #include "util.hpp"
 
 using namespace std;
-
-// Read matrix B from file in the right format (transpose)
+/**********************************************************
+ * Read matrix B from file in the right format (transposed)
+ **********************************************************/
 void loadB(mat &M, std::ifstream &M_file)
 {
     uint64_t i, j;
@@ -22,48 +23,37 @@ void loadB(mat &M, std::ifstream &M_file)
         i--;
         j--;
 
-        if (i < 0 || i >= M.size() || j < 0 || j >= M[0].size())
+        if (i < 0 || i >= M.rows() || j < 0 || j >= M.cols())
             error(format("Invalid coordinates (%lld, %lld) in matrix B", i, j));
 
         M[j][i * 2] = val;
     }
 }
 
-struct worker_args_t
-{
-    uint64_t line;
-    vector<double> &row;
-    // place in a line of the C matrix where the worker shourld put the result
-    double &place;
-    pthread_barrier_t &red_barrier;
-};
-
-struct prepper_args_t
-{
-    prepper_args_t(mat *B, double value_from_a, uint64_t column)
-        : B(B), value_from_a(value_from_a), column(column)
-    {
-    }
-    mat *B;
-    double value_from_a;
-    uint64_t column;
-};
-
+/******************************************************************
+ * Function for the preparation threads. It will write values from 
+ * the matrix A into the special matrix B.
+ ******************************************************************/
 void *prep(void *args_p)
 {
     prepper_args_t &args = *((prepper_args_t *)args_p);
-    for (uint64_t i = 0; i < args.B->size(); i++)
+    for (uint64_t i = 0; i < args.B->rows(); i++)
     {
-        (*args.B)[i][args.column] = args.value_from_a;
+        *(args.B)[i][args.column] = args.value_from_a;
     }
     return NULL;
 }
 
+/******************************************************************
+ * Function for the reduce threads. It will multiply and sum the 
+ * values from the lines of the previously prepared matrix B to 
+ * put as values in lines of the matrix C.
+ ******************************************************************/
 void *reduce(void *args_p)
 {
     double sum          = 0;
     worker_args_t &args = *((worker_args_t *)args_p);
-    for (uint64_t i = 0; i < args.row.size(); i += 2)
+    for (uint64_t i = 0; i < args.row_length; i += 2)
     {
         sum += args.row[i] * args.row[i + 1];
     }
@@ -71,15 +61,16 @@ void *reduce(void *args_p)
     return NULL;
 }
 
-// Reads and returns next row of a matrix from a given file
-vector<double> loadRow(ifstream &file_M, uint64_t M_size, uint64_t line_no)
+/********************************************************************
+ * This function reads a marix line from a given file and returns it.
+ ********************************************************************/
+double *loadRow(ifstream &file_M, uint64_t M_size, uint64_t line_no)
 {
-
     static uint64_t i, j;
     static double val;
     static bool last = false;
 
-    vector<double> M_line(M_size);
+    double *M_line = new double[M_size];
 
     if (last && line_no == i) M_line[j] = val;
 
@@ -102,46 +93,53 @@ vector<double> loadRow(ifstream &file_M, uint64_t M_size, uint64_t line_no)
     return M_line;
 }
 
-void prep_b_lines(ifstream &file_A, mat *B)
+/*********************************************************************
+ * This function prepares the transposed matrix B with spaces between
+ * items by placing values from the lines of A in these free spaces.
+ *********************************************************************/
+void prep_b_lines(ifstream &file_A, mat &B)
 {
     static uint64_t A_line = 0;
-    vector<pthread_t> preppers((*B)[0].size() / 2);
-    vector<double> line_A = loadRow(file_A, (*B)[0].size() / 2, A_line);
+    uint64_t num_threads   = (B.cols() / 2);
+    double *line_A         = loadRow(file_A, B.cols() / 2, A_line);
+    pthread_t *preppers    = new pthread_t[num_threads];
+    prepper_args_t *args   = new prepper_args_t[num_threads];
     A_line++;
-    uint64_t i = 0;
-    vector<prepper_args_t> args;
-    for (auto &prepper : preppers)
+    for (uint64_t i = 0; i < num_threads; i++)
     {
-        args.push_back(prepper_args_t(B, line_A[i], i * 2 + 1));
-        pthread_create(&prepper, NULL, &prep, (void *)&args[i]);
+        args[i] = prepper_args_t(&B, line_A[i], i * 2 + 1);
+        pthread_create(&preppers[i], NULL, &prep, (void *)&args[i]);
     }
     void **ret;
-    for (auto &prepper : preppers)
+    for (uint64_t i = 0; i < num_threads; i++)
     {
-        pthread_join(prepper, (void **)&ret);
+        pthread_join(preppers[i], (void **)&ret);
     }
 }
 
-void generate_next_C_line(mat *B, ifstream &file_A, uint64_t n_lines_a,
-                          vector<double> &line_C)
+/*********************************************************************
+ * This function is wrapper that do some preparation and calls the    
+ * other preparatory and reduction functions.                          
+ *********************************************************************/
+void generate_next_C_line(mat &B, ifstream &file_A, uint64_t n_lines_a,
+                          double *line_C)
 {
-    vector<pthread_t> workers(B->size());
-    uint64_t i = 0;
+    pthread_t *workers = new pthread_t[B.rows()];
 
     pthread_barrier_t barrier;
     pthread_barrier_init(&barrier, NULL, B->size());
 
     prep_b_lines(file_A, B);
 
-    for (auto &worker : workers)
+    for (uint64_t i = 0; i < B.rows(); i++)
     {
-        worker_args_t args{i, (*B)[i], line_C[i], barrier};
-        pthread_create(&worker, NULL, &reduce, (void *)&args);
+        worker_args_t args{i, B[i], B.cols(), line_C[i], barrier};
+        pthread_create(&workers[i], NULL, &reduce, (void *)&args);
     }
-    char *ret;
-    for (auto &worker : workers)
+    void **ret;
+    for (uint64_t i = 0; i < B.rows(); i++)
     {
-        pthread_join(worker, (void **)&ret);
+        pthread_join(workers[i], (void **)&ret);
     }
 }
 
