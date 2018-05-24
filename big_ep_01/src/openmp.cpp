@@ -3,11 +3,11 @@
 void run_openmp(std::ifstream &file_A, mat &M, mat &C, uint64_t p)
 {
     // For each row of A
-    double *row_A = new row_A[p];
+    double *row_A = new double[p];
     for (uint64_t i = 0; i < p; i++)
     {
         // Loading phase
-        loadRow(file_A, p, i + 1);
+        loadRow(file_A, p, i + 1, row_A);
 
         #pragma omp parallel for
         for (uint64_t v_index = 0; v_index < p; v_index++)
@@ -36,4 +36,5 @@ void run_openmp(std::ifstream &file_A, mat &M, mat &C, uint64_t p)
             C[i][v_index] = sum;
         }
     }
+    delete row_A;
 }
