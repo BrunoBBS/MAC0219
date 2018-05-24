@@ -55,7 +55,6 @@ void prep_b_lines(ifstream &file_A, mat &B, pthread_t *preppers, prepper_args_t 
     {
         pthread_join(preppers[i], (void **)&ret);
     }
-    delete line_A;
 }
 
 /*********************************************************************
