@@ -32,5 +32,4 @@ int main()
 
     A_file.close();
     B_file.close();
-    exit(0);
 }

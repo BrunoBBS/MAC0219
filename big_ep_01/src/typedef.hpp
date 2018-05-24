@@ -22,11 +22,11 @@ class Matrix
 
     bool valid(uint64_t row, uint64_t col) const;
 
-    double *&operator[](uint64_t row);
+    double *operator[](uint64_t row);
 
   private:
     dim dimensions;
-    double **matrix;
+    double *matrix;
 };
 
 typedef Matrix mat;
