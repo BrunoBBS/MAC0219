@@ -111,7 +111,7 @@ int main(int argc, char **argv)
     // Now the modified B is loaded, C is created. Now we just load the computed
     // values into C
     if (exec_mode == 'p')
-        run_pthreads();
+        run_pthreads(A_file, B, C, p);
     else
         run_openmp(A_file, B, C, p);
 

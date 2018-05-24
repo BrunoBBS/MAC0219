@@ -85,7 +85,9 @@ void generate_next_C_line(mat &B, ifstream &file_A, uint64_t n_lines_a,
     delete workers;
 }
 
-void run_pthreads()
+void run_pthreads(std::ifstream &file_A, mat &B, mat &C, uint64_t p)
 {
-
+    // For each line of C
+   for(uint64_t row = 0; row < C.rows(); row++)
+       generate_next_C_line(B, file_A, p, C[row]);
 }
