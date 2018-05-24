@@ -1,1 +1,0 @@
-change vector to pointers becouse of thread safety
