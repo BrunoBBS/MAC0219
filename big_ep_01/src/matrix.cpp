@@ -7,7 +7,12 @@ Matrix::Matrix(uint64_t rows, uint64_t cols)
 
     matrix = new double*[rows];
     for (uint64_t row = 0; row < rows; row++)
+    {
         matrix[row] = new double[cols];
+        for (uint64_t col = 0; col < cols; col++)
+            matrix[row][col] = 0;
+
+    }
 }
 
 Matrix::~Matrix()

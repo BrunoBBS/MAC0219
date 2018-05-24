@@ -115,6 +115,17 @@ int main(int argc, char **argv)
     else
         run_openmp(A_file, B, C, p);
 
+
+    // Write result to output file
+
+    // Size
+    C_file << C.rows() << " " << C.cols() << std::endl;
+
+    for (uint64_t row = 0; row < C.rows(); row++)
+        for (uint64_t col = 0; col < C.cols(); col++)
+            //if (C[row][col] != 0)
+                C_file << row + 1 << " " << col + 1 << " " << C[row][col] << std::endl;
+
     // Close Matrix Files
     A_file.close();
     B_file.close();
