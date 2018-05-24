@@ -40,8 +40,7 @@ struct worker_args_t
     double *row;
     uint64_t row_length;
     // place in a line of the C matrix where the worker shourld put the result
-    double &place;
-    pthread_barrier_t &red_barrier;
+    double *place;
 };
 
 struct prepper_args_t

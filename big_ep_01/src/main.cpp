@@ -5,9 +5,9 @@
 #include <pthread.h>
 #include <stdlib.h>
 
+#include "methods.hpp"
 #include "typedef.hpp"
 #include "util.hpp"
-#include "methods.hpp"
 
 using namespace std;
 
@@ -111,20 +111,19 @@ int main(int argc, char **argv)
     // Now the modified B is loaded, C is created. Now we just load the computed
     // values into C
     if (exec_mode == 'p')
-        run_pthreads(A_file, B, C, p);
+        run_pthreads(A_file, B, C);
     else
         run_openmp(A_file, B, C, p);
 
-
     // Write result to output file
-
     // Size
     C_file << C.rows() << " " << C.cols() << std::endl;
 
     for (uint64_t row = 0; row < C.rows(); row++)
         for (uint64_t col = 0; col < C.cols(); col++)
-            //if (C[row][col] != 0)
-                C_file << row + 1 << " " << col + 1 << " " << C[row][col] << std::endl;
+            // if (C[row][col] != 0)
+            C_file << row + 1 << " " << col + 1 << " " << C[row][col]
+                   << std::endl;
 
     // Close Matrix Files
     A_file.close();

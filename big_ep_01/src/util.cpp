@@ -22,17 +22,20 @@ void error(std::string message, int retval)
     exit(retval);
 }
 
-
 /********************************************************************
  * This function reads a marix line from a given file and returns it.
  ********************************************************************/
-double *loadRow(std::ifstream &file_M, uint64_t line_len, uint64_t line_no, double *existing_row)
+double *loadRow(std::ifstream &file_M, uint64_t line_len, uint64_t line_no,
+                double *existing_row)
 {
     static uint64_t i, j;
     static double val;
     static bool last = false;
 
     double *M_line = existing_row ? existing_row : new double[line_len];
+
+    for (uint64_t i = 0; i < line_len; i++)
+        M_line[i] = 0;
 
     if (last && line_no == i) M_line[j] = val;
 

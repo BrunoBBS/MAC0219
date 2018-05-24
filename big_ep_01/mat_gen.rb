@@ -2,8 +2,8 @@
 
 require 'matrix'
 
-size_a = [5, 5]
-size_b = [5, 6]
+size_a = [500000, 500000]
+size_b = [500000, 600000]
 
 # Probability of space being filled
 filled = 0.5

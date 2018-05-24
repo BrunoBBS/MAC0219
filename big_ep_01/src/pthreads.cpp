@@ -27,7 +27,8 @@ void *reduce(void *args_p)
     {
         sum += args.row[i] * args.row[i + 1];
     }
-    args.place = sum;
+    
+    *args.place = sum;
     return NULL;
 }
 
@@ -62,32 +63,33 @@ void prep_b_lines(ifstream &file_A, mat &B)
  * This function is wrapper that do some preparation and calls the
  * other preparatory and reduction functions.
  *********************************************************************/
-void generate_next_C_line(mat &B, ifstream &file_A, uint64_t n_lines_a,
-                          double *line_C)
+void generate_next_C_line(mat &B, ifstream &file_A, double *line_C)
 {
     pthread_t *workers = new pthread_t[B.rows()];
 
-    pthread_barrier_t barrier;
-    pthread_barrier_init(&barrier, NULL, B.rows());
-
     prep_b_lines(file_A, B);
+    worker_args_t *args   = new worker_args_t[B.rows()];
 
     for (uint64_t i = 0; i < B.rows(); i++)
     {
-        worker_args_t args{i, B[i], B.cols(), line_C[i], barrier};
-        pthread_create(&workers[i], NULL, &reduce, (void *)&args);
+        args[i] = worker_args_t{i, B[i], B.cols(), &line_C[i]};
+        pthread_create(&workers[i], NULL, &reduce, (void *)&args[i]);
     }
+
     void **ret;
     for (uint64_t i = 0; i < B.rows(); i++)
     {
         pthread_join(workers[i], (void **)&ret);
     }
+
     delete workers;
 }
 
-void run_pthreads(std::ifstream &file_A, mat &B, mat &C, uint64_t p)
+void run_pthreads(std::ifstream &file_A, mat &B, mat &C)
 {
     // For each line of C
-   for(uint64_t row = 0; row < C.rows(); row++)
-       generate_next_C_line(B, file_A, p, C[row]);
+    for (uint64_t row = 0; row < C.rows(); row++)
+    {
+        generate_next_C_line(B, file_A, C[row]);
+    }
 }
