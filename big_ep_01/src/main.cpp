@@ -3,7 +3,6 @@
 #include <string>
 
 #include <pthread.h>
-#include <stdarg.h>
 #include <stdlib.h>
 
 #include "typedef.hpp"
@@ -26,7 +25,7 @@ void load_B(mat &M, std::ifstream &M_file)
         row--;
         col--;
 
-        if (M.valid(row, col))
+        if (!M.valid(row, col))
             error(format("Invalid coordinates (%lld, %lld) in matrix B",
                          row + 1, col + 1));
 
