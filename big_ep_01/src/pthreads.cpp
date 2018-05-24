@@ -9,7 +9,7 @@ void *prep(void *args_p)
     prepper_args_t &args = *((prepper_args_t *)args_p);
     for (uint64_t i = 0; i < args.B->rows(); i++)
     {
-        *(args.B)[i][args.column] = args.value_from_a;
+        (*args.B)[i][args.column] = args.value_from_a;
     }
     return NULL;
 }
