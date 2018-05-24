@@ -33,7 +33,7 @@ File.open('A', 'w+') do |f|
         if Random.rand() < filled then
             val = Random.rand(maxv - minv) + minv
             A[i, j] = val
-            f.puts "#{i} #{j} #{val}"
+            f.puts "#{i + 1} #{j + 1} #{val}"
         end
     end
 end
@@ -44,7 +44,7 @@ File.open('B', 'w+') do |f|
         if Random.rand() < filled then
             val = Random.rand(maxv - minv) + minv
             B[i, j] = val
-            f.puts "#{i} #{j} #{val}"
+            f.puts "#{i + 1} #{j + 1} #{val}"
         end
     end
 end
@@ -55,7 +55,7 @@ File.open('C', 'w+') do |f|
     f.puts "#{C.row_count} #{C.column_count}"
     Matrix.build(C.row_count, C.column_count).each do |i, j|
         if C[i, j] != 0 then
-            f.puts "#{i} #{j} #{C[i, j]}"
+            f.puts "#{i + 1} #{j + 1} #{C[i, j]}"
         end
     end
 end

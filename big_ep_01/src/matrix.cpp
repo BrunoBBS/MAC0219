@@ -22,6 +22,16 @@ Matrix::~Matrix()
     delete matrix;
 }
 
+void Matrix::print() const
+{
+    for (uint64_t i = 0; i < rows(); i++)
+    {
+        for (uint64_t j = 0; j < cols(); j++)
+            std::cout << matrix[i][j] << " ";
+        std::cout << std::endl;
+    }
+}
+
 uint64_t Matrix::rows() const
 {
     return dimensions.first;

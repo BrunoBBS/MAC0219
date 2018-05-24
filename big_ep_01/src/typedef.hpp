@@ -15,6 +15,8 @@ class Matrix
     Matrix(uint64_t rows, uint64_t cols);
     ~Matrix();
 
+    void print() const;
+
     uint64_t rows() const;
     uint64_t cols() const;
 
