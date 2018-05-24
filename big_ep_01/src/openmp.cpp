@@ -14,7 +14,7 @@ void run_openmp(std::ifstream &file_A, mat &M, mat &C, uint64_t p)
         #pragma omp parallel for
         for (uint64_t v_index = 0; v_index < p; v_index++)
         {
-            // My hope is that these values get loaded into registers
+            // My hope is that these values get loaded directly into the registers
             double   val  = row_A[v_index];
             uint64_t col  = v_index * 2 + 1;
             uint64_t rows = M.rows();
@@ -27,7 +27,7 @@ void run_openmp(std::ifstream &file_A, mat &M, mat &C, uint64_t p)
         #pragma omp parallel for
         for (uint64_t v_index = 0; v_index < C.cols(); v_index++)
         {
-            // My hope is (again) that these values are loaded into the registers
+            // My hope is (again) that these values are loaded directly into the registers
             double    sum = 0;
             double   *row = M[v_index];
             uint64_t  col = M.cols();

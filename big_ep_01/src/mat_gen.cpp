@@ -20,10 +20,10 @@ int main()
     std::default_random_engine generator;
     std::uniform_real_distribution<double> distribution(0.0, 100.0);
 
-#pragma omp prallel for
+#pragma omp parallel for
     for (uint64_t row = 0; row < rows; row++)
     {
-#pragma omp prallel for
+#pragma omp parallel for
         for (uint64_t col = 0; col < cols; col++)
         {
             A[row][col] = distribution(generator);

@@ -7,7 +7,9 @@
 void *prep(void *args_p)
 {
     prepper_args_t &args = *((prepper_args_t *)args_p);
-    for (uint64_t i = 0; i < args.B->rows(); i++)
+    uint64_t b_rows = args.B->rows();
+ 
+    for (uint64_t i = 0; i < b_rows; i++)
     {
         (*args.B)[i][args.column] = args.value_from_a;
     }
@@ -23,6 +25,7 @@ void *reduce(void *args_p)
 {
     double sum          = 0;
     worker_args_t &args = *((worker_args_t *)args_p);
+
     for (uint64_t i = 0; i < args.row_length; i += 2)
     {
         sum += args.row[i] * args.row[i + 1];
@@ -36,13 +39,11 @@ void *reduce(void *args_p)
  * This function prepares the transposed matrix B with spaces between
  * items by placing values from the lines of A in these free spaces.
  *********************************************************************/
-void prep_b_lines(ifstream &file_A, mat &B)
+void prep_b_lines(ifstream &file_A, mat &B, pthread_t *preppers, prepper_args_t *args, double *line_A)
 {
     static uint64_t A_line = 0;
     uint64_t num_threads   = (B.cols() / 2);
-    double *line_A         = loadRow(file_A, B.cols() / 2, A_line);
-    pthread_t *preppers    = new pthread_t[num_threads];
-    prepper_args_t *args   = new prepper_args_t[num_threads];
+    loadRow(file_A, B.cols() / 2, A_line, line_A);
     A_line++;
     for (uint64_t i = 0; i < num_threads; i++)
     {
@@ -55,8 +56,6 @@ void prep_b_lines(ifstream &file_A, mat &B)
         pthread_join(preppers[i], (void **)&ret);
     }
     delete line_A;
-    delete preppers;
-    delete args;
 }
 
 /*********************************************************************
@@ -65,15 +64,23 @@ void prep_b_lines(ifstream &file_A, mat &B)
  *********************************************************************/
 void generate_next_C_line(mat &B, ifstream &file_A, double *line_C)
 {
-    pthread_t *workers = new pthread_t[B.rows()];
+    uint64_t p = B.cols() / 2;
+    uint64_t n = B.rows();
 
-    prep_b_lines(file_A, B);
-    worker_args_t *args   = new worker_args_t[B.rows()];
+    double *line_A = new double[p];
+
+    pthread_t *preppers    = new pthread_t[p];
+    prepper_args_t *prep_args   = new prepper_args_t[p];
+
+    pthread_t *workers = new pthread_t[n];
+    worker_args_t *work_args   = new worker_args_t[n];
+
+    prep_b_lines(file_A, B, preppers, prep_args, line_A);
 
     for (uint64_t i = 0; i < B.rows(); i++)
     {
-        args[i] = worker_args_t{i, B[i], B.cols(), &line_C[i]};
-        pthread_create(&workers[i], NULL, &reduce, (void *)&args[i]);
+        work_args[i] = worker_args_t{i, B[i], B.cols(), &line_C[i]};
+        pthread_create(&workers[i], NULL, &reduce, (void *)&work_args[i]);
     }
 
     void **ret;
@@ -82,7 +89,13 @@ void generate_next_C_line(mat &B, ifstream &file_A, double *line_C)
         pthread_join(workers[i], (void **)&ret);
     }
 
+    delete line_A;
+
+    delete preppers;
+    delete prep_args;
+    
     delete workers;
+    delete work_args;
 }
 
 void run_pthreads(std::ifstream &file_A, mat &B, mat &C)
