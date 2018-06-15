@@ -12,9 +12,9 @@ using namespace std;
 typedef vector<vector<int32_t>> mat_t;
 
 /*! Reads all matrices from file and stores them in the given matrix.
- * @param in_file This informs qhich file to load from.
- * @param num_mat This informs the nummber of matrices the file contains.
- * @param matrix Mtartix to fill.
+ * @param in_file This informs which file to load from.
+ * @param num_mat This informs the number of matrices the file contains.
+ * @param matrix Matrix to fill.
  * @return a struct matrices.
  */
 void load_matrices(ifstream &in_file, int32_t num_mat, mat_t &matrix)
