@@ -3,6 +3,8 @@
 */
 
 #include "util.hpp"
+#include "kernel.cuh"
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -46,6 +48,16 @@ int main(int argc, char *argv[])
     std::vector<int32_t> mat(9 * num_mat);
 
     load_matrices(in_file, mat);
+
+    // Allocate array in GPU
+    void *device_array;
+    size_t data_size = sizeof(int32_t) * mat.size();
+    cudaMalloc(&device_array, data_size);
+
+    // Copy data to device
+    cudaMemcpy(device_array, (const void *) mat.data(), data_size, cudaMemcpyHostToDevice);
+
+    reduce(num_mat, device_array);
 
     in_file.close();
 }

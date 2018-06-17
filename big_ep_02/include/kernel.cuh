@@ -1,5 +1,6 @@
 #ifndef KERNEL_CU
 #define KERNEL_CU
+#include <cuda_runtime.h>
 
 struct SharedMemory                                                              
 {                                                                                
@@ -18,5 +19,7 @@ struct SharedMemory
 
 __global__
 void reduce_min(int n_mat, int* g_values);
+
+void reduce(int num_mat, void* device_array);
 
 #endif
