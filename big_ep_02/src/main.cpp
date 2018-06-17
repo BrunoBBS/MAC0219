@@ -41,7 +41,6 @@ int main(int argc, char *argv[])
     if (!in_file)
         error(format("File '%s' couldn't be opened!", argv[1]));
 
-    
     int32_t num_mat;
     in_file >> num_mat;
 

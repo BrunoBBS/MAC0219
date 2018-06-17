@@ -37,8 +37,14 @@ void reduce_min(int n_mat, int* g_values)
 void reduce(int num_mat, void* device_array)
 {
     const int32_t block_size = 1024;
-    const int32_t num_blocks = (num_mat / (block_size * 2)) + (num_mat % (block_size * 2) != 0);
 
-    for (int item = 0; item < 9; item++)
-        reduce_min<<<num_blocks, block_size>>>(num_mat, ((int*) device_array) + item * num_mat);
+    int elements = num_mat;
+    do {
+        int32_t num_blocks = (elements / (block_size * 2)) + (elements % (block_size * 2) != 0);
+
+        for (int item = 0; item < 9; item++)
+            reduce_min<<<num_blocks, block_size>>>(elements, ((int*) device_array) + item * elements);
+
+        elements = num_blocks;
+    } while (num_blocks > 1);
 }
