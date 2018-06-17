@@ -17,7 +17,7 @@ using namespace std;
  * @param matrix Matrix to fill.
  * @return a struct matrices.
  */
-void load_matrices(ifstream &in_file, std::vector<int32_t> &matrix)
+void load_matrices(ifstream &in_file, int itemcnt, std::vector<int32_t> &matrix)
 {
     std::string ast;
 
@@ -25,30 +25,61 @@ void load_matrices(ifstream &in_file, std::vector<int32_t> &matrix)
 
     for (int mat = 0; mat < n; mat++)
     {
-        in_file >> ast;
+        if (!(in_file >> ast))
+            error(format("Failed reading matrix %d!", mat));
 
         // Reads actual numbers from lines
-        in_file >> matrix[mat + 0 * n] >> matrix[mat + 1 * n] >> matrix[mat + 2 * n];
-        in_file >> matrix[mat + 3 * n] >> matrix[mat + 4 * n] >> matrix[mat + 5 * n];
-        in_file >> matrix[mat + 6 * n] >> matrix[mat + 7 * n] >> matrix[mat + 8 * n];
+        for (int k = 0; k < itemcnt; k++)
+            if (!(in_file >> matrix[mat + k * n]))
+                error(format("Failed reading matrix %d!", mat));
     }
 }
 
-const int itemcnt = 9;
 
 int main(int argc, char *argv[])
 {
+    if (!(argc == 2 || argc == 4))
+    {
+        std::cout << "Usage: " << argv[0] << " <matrix definition file> [i] [j]" << std::endl;
+        return 0;
+    }
+
+    int w = 3;
+    int h = 3;
+
+    // Read matrix dimensions if given
+    if (argc == 4)
+    {
+        try {
+            h = std::stoi(argv[2]);
+            w = std::stoi(argv[3]);
+        } catch (std::invalid_argument e) {
+            error("Given matrix dimensions are invalid!");
+        } catch (std::out_of_range e) {
+            error("Given matrix dimensions are too big!");
+        }
+    }
+
+
+    const int itemcnt = w * h;
+
+    // Try opening file
     std::ifstream in_file;
     in_file.open(argv[1]);
     if (!in_file)
         error(format("File '%s' couldn't be opened!", argv[1]));
 
+    // Read number of matrices
     int32_t num_mat;
-    in_file >> num_mat;
+    if (!(in_file >> num_mat))
+        error(format("Failed to read number of matrices! Is '%s' a valid file?", argv[1]));
 
-    std::vector<int32_t> mat(9 * num_mat);
+    // Allocate and load matrices from file
+    std::vector<int32_t> mat(itemcnt * num_mat);
 
-    load_matrices(in_file, mat);
+    load_matrices(in_file, itemcnt, mat);
+
+    in_file.close();
 
     // Allocate array in GPU
     void *device_array;
@@ -64,8 +95,9 @@ int main(int argc, char *argv[])
     std::vector<int32_t> out(itemcnt);
     cudaMemcpy((void *) out.data(), device_array, sizeof(int32_t) * itemcnt, cudaMemcpyDeviceToHost);
 
-    for (int i = 0; i < 9; i++)
-        std::cout << mat[i] << std::endl;
-
-    in_file.close();
+    for (int i = 0; i < h; i++) {
+        for (int j = 0; j < w; j++)
+            std::cout << out[i * w + j] << ((j == w - 1) ? "" : " ");
+        std::cout << std::endl;
+    }
 }

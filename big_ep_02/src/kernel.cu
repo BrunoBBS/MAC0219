@@ -14,8 +14,6 @@ __global__ void reduce_min(unsigned int n_mat, int* g_values)
     // Global (across blocks) thread id
     unsigned int i = 2 * blockIdx.x * blockDim.x + threadIdx.x;
 
-    char c = 'A';
-
     // Reference to this thread block
     thread_block this_block = this_thread_block();
     __shared__ int local_data[R_BLOCK_SZ * 2];
@@ -37,17 +35,15 @@ __global__ void reduce_min(unsigned int n_mat, int* g_values)
 
     // Write results to global memory
     if (lid == 0)
-    {
-        printf("[%d, %d] (%d): %d\n", blockIdx.x, threadIdx.x, i, local_data[0]);
         g_values[2 * blockIdx.x * blockDim.x] = local_data[0];
-    }
 }
 
 __global__ void compress(int n_values, int* g_values, int interval)
 {
     unsigned int gid = blockIdx.x * blockDim.x + threadIdx.x;
 
-    if (gid < n_values) g_values[gid] = g_values[interval * gid];
+    if (gid < n_values)
+        g_values[gid] = g_values[interval * gid];
 }
 
 void reduce(unsigned int num_mat, void* device_array, unsigned int itemcnt)
@@ -63,12 +59,8 @@ void reduce(unsigned int num_mat, void* device_array, unsigned int itemcnt)
 
     do
     {
-        printf("Starting iteration...\n");
-
         // Calculates number of blocks sized block_size based on number of elements
         num_blocks_r = (elements / (block_size_r * 2)) + (elements % (block_size_r * 2) != 0);
-
-        printf("num_blocks_r = %d\n", num_blocks_r);
 
         // Calls the kernel for each position of the matrix (piece of the vector)
         for (int item = 0; item < itemcnt; item++)
