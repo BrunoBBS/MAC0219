@@ -18,7 +18,7 @@ __global__ void reduce_min(unsigned int n_mat, int* g_values)
 
     // Reference to this thread block
     thread_block this_block = this_thread_block();
-    int *local_data = SharedMemory();
+    __shared__ int local_data[R_BLOCK_SZ * 2];
 
     local_data[lid] = (i < n_mat) ? g_values[i] : g_values[0];
     local_data[lid + blockDim.x] = (i + blockDim.x < n_mat) ? g_values[i + blockDim.x] : g_values[0];
@@ -37,7 +37,10 @@ __global__ void reduce_min(unsigned int n_mat, int* g_values)
 
     // Write results to global memory
     if (lid == 0)
+    {
+        printf("[%d, %d] (%d): %d\n", blockIdx.x, threadIdx.x, i, local_data[0]);
         g_values[2 * blockIdx.x * blockDim.x] = local_data[0];
+    }
 }
 
 __global__ void compress(int n_values, int* g_values, int interval)
@@ -50,8 +53,8 @@ __global__ void compress(int n_values, int* g_values, int interval)
 void reduce(unsigned int num_mat, void* device_array, unsigned int itemcnt)
 {
     // Set the block size
-    const int32_t block_size_r = 1024;
-    const int32_t block_size_c = 1024;
+    const int32_t block_size_r = R_BLOCK_SZ;
+    const int32_t block_size_c = C_BLOCK_SZ;
 
     // We start with num_mat elements
     int elements = num_mat;
@@ -60,8 +63,12 @@ void reduce(unsigned int num_mat, void* device_array, unsigned int itemcnt)
 
     do
     {
+        printf("Starting iteration...\n");
+
         // Calculates number of blocks sized block_size based on number of elements
         num_blocks_r = (elements / (block_size_r * 2)) + (elements % (block_size_r * 2) != 0);
+
+        printf("num_blocks_r = %d\n", num_blocks_r);
 
         // Calls the kernel for each position of the matrix (piece of the vector)
         for (int item = 0; item < itemcnt; item++)
