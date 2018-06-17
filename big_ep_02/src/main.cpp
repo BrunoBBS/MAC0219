@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <cuda_runtime.h>
 #include <vector>
 using namespace std;
 
@@ -47,7 +48,7 @@ int main(int argc, char *argv[])
         mat[i].resize(num_mat);
 
     load_matrices(in_file, num_mat, mat);
-    
+
     for (auto item : mat)
     {
         cout << "[";
