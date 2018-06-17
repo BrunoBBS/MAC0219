@@ -17,8 +17,8 @@ struct SharedMemory
     }
 };
 
-__global__ void reduce_min(int n_mat, int *g_values);
+__global__ void reduce_min(unsigned int n_mat, int *g_values);
 
-void reduce(int num_mat, void *device_array);
+void reduce(unsigned int num_mat, void *device_array, unsigned int itemcnt);
 
 #endif

@@ -34,6 +34,8 @@ void load_matrices(ifstream &in_file, std::vector<int32_t> &matrix)
     }
 }
 
+const int itemcnt = 9;
+
 int main(int argc, char *argv[])
 {
     std::ifstream in_file;
@@ -56,7 +58,14 @@ int main(int argc, char *argv[])
     // Copy data to device
     cudaMemcpy(device_array, (const void *) mat.data(), data_size, cudaMemcpyHostToDevice);
 
-    reduce(num_mat, device_array);
+    reduce(num_mat, device_array, itemcnt);
+
+    // Retrieve values
+    std::vector<int32_t> out(itemcnt);
+    cudaMemcpy((void *) out.data(), device_array, sizeof(int32_t) * itemcnt, cudaMemcpyDeviceToHost);
+
+    for (int i = 0; i < 9; i++)
+        std::cout << mat[i] << std::endl;
 
     in_file.close();
 }
