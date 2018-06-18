@@ -42,7 +42,7 @@ __global__ void compress(int n_values, int* g_values, int interval)
 {
     unsigned int gid = blockIdx.x * blockDim.x + threadIdx.x;
 
-    if (gid < n_values)
+    for (int gid = 0; gid < n_values; gid++)
         g_values[gid] = g_values[interval * gid];
 }
 
@@ -69,7 +69,7 @@ void reduce(unsigned int num_mat, void* device_array, unsigned int itemcnt)
         num_blocks_c = (num_blocks_r / block_size_c) + (num_blocks_r % block_size_c != 0);
 
         // Calls compressor kernel for global array
-        compress<<<num_blocks_c, block_size_c>>>(num_blocks_r, (int*) device_array, block_size_r * 2);
+        compress<<<1, 1>>>(num_blocks_r, (int*) device_array, block_size_r * 2);
 
         // Repeat with this iteration's results
         elements = num_blocks_r;
