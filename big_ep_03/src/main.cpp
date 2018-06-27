@@ -1,4 +1,5 @@
 #include "util.hpp"
+#include "cpu.hpp"
 
 #include <iostream>
 #include <string>
@@ -24,7 +25,9 @@ int main(int argc, char *argv[])
     read(k, k_str, "k");
     read(M, M_str, "M");
 
-    // CODE HERE
+    // TODO: CODE HERE
+    std::cout << cpu_flops(1000000000) << std::endl;
+
 
     return 0;
 }
