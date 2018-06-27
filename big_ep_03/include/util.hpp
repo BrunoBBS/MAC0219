@@ -5,7 +5,7 @@
 #include <fstream>
 
 #include <stdarg.h>
-#include <math.h>
+#include <cmath>
 
 
 inline double f(uint64_t M, uint64_t k, double x)
