@@ -1,5 +1,6 @@
 #include "util.hpp"
 #include "cpu.hpp"
+#include "acc.cuh"
 
 #include <iostream>
 #include <string>
@@ -26,7 +27,8 @@ int main(int argc, char *argv[])
     read(M, M_str, "M");
 
     // TODO: CODE HERE
-    std::cout << cpu_flops(1000000000) << std::endl;
+    std::cout << cpu_probing(100000000, M, k) << std::endl;
+    std::cout << gpu_probing(100000000, M ,k) << std::endl;
 
 
     return 0;

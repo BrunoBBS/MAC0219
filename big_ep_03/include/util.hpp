@@ -6,12 +6,7 @@
 
 #include <stdarg.h>
 #include <cmath>
-
-
-inline double f(uint64_t M, uint64_t k, double x)
-{
-    return (sin((2 * M + 1) * M_PI * x) * cos(2 * M_PI * k * x))/sin(M_PI * x);
-}
+#include <random>
 
 // Converts strings to integers
 void read(uint64_t &v, std::string v_str, std::string name);
