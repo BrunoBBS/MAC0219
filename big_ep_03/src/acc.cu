@@ -8,7 +8,8 @@ using namespace std::chrono;
 
 /* This code was copied from 
  * https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#atomic-functions 
- * since there is no atomicAdd for GPUs with Compute Capability less than 6.0
+ * since there is no atomicAdd for GPUs with Compute Capability less than 6.0.
+ * The dummy parameter fixes any overload or double definition errors.
  */
 __device__ double atomicAdd(double* address, double val, double dummy)
 {
@@ -53,12 +54,12 @@ __global__ void gpu_calc(curandState_t *states, double *sum, double *sum_2,
                          uint64_t n_threads, uint64_t n_leap_ops)
 {
     uint64_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    int lid = threadIdx.x;
 
-    __shared__ double block_sum;
-    __shared__ double block_sum_2;
+    __shared__ double block_sum[1024];
+    __shared__ double block_sum_2[1024];
 
-    if (threadIdx.x == 0)
-        block_sum = block_sum_2 = 0;
+    block_sum[lid] = block_sum_2[lid] = 0;
 
     __syncthreads();
 
@@ -66,6 +67,7 @@ __global__ void gpu_calc(curandState_t *states, double *sum, double *sum_2,
     {
         double x, res;
         curandState_t local_state = states[tid];
+        curand_init (tid, 0, 0, &local_state);
 
         n_ops_thread += tid < n_leap_ops;
 
@@ -73,14 +75,24 @@ __global__ void gpu_calc(curandState_t *states, double *sum, double *sum_2,
         {
             x   = curand_uniform_double(&local_state) / 2;
             res = gpu_f(M, k, x);
-            atomicAdd(&block_sum, res, 0);
-            atomicAdd(&block_sum_2, res * res, 0);
+            block_sum[lid] += res;
+            block_sum_2[lid] += res * res;
         }
         __syncthreads();
-        if (threadIdx.x == 0)
+        // Reduction phase
+        for (int s = blockDim.x / 2; s > 1; s >>= 1)
         {
-            atomicAdd(sum, block_sum, 0);
-            atomicAdd(sum_2, block_sum_2, 0);
+            if (lid < s)
+            {
+                block_sum[lid]   += block_sum[lid + s];
+                block_sum_2[lid] += block_sum_2[lid + s];
+            }
+            __syncthreads();
+        }
+        if (lid == 0)
+        {
+            atomicAdd(sum, block_sum[0], 0);
+            atomicAdd(sum_2, block_sum_2[0], 0);
         }
     }
 }
@@ -116,11 +128,10 @@ __host__ std::vector<double> gpu_integration(uint64_t n_ops, int64_t M,
     // Actually call the calc function
     gpu_calc<<<n_blocks, block_size>>>(states, sum, sum_2, n_ops_thread, M, k, n_threads, n_leap_ops);
 
-    std::vector<double> result(2);
-    cudaMemcpy(result.data(), sum, 2 * sizeof(double), cudaMemcpyDeviceToHost);
+    std::vector<double> sums(2);
+    cudaMemcpy(sums.data(), sum, 2 * sizeof(double), cudaMemcpyDeviceToHost);
     
     cudaFree(states);
-    cudaFree(sum);
 
-    return result;
+    return sums;
 }

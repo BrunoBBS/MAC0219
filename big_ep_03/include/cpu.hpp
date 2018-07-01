@@ -14,6 +14,10 @@ void cpu_calc(std::mt19937_64 &gen,
               std::uniform_real_distribution<double> &dist, double &sum,
               double &sum_2, uint64_t n_ops);
 
-std::vector<double> cpu_integration(uint64_t n_ops, int64_t M, int64_t k);
+void cpu_calc_serial(std::mt19937_64 &gen,
+              std::uniform_real_distribution<double> &dist, double &sum,
+              double &sum_2, uint64_t n_ops);
+
+std::vector<double> cpu_integration(uint64_t n_ops, int64_t M, int64_t k, char type);
 
 #endif
