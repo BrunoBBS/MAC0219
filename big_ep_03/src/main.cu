@@ -41,10 +41,10 @@ int main(int argc, char *argv[])
     std::vector<double> cpu_sums = cpu_integration(cpu_ops, M, k, 'm');
 
     // Calculation of mean and standard deviation
-    double mean, std_dev, mean_2;
+    double mean, std_dev, mean_sq;
     mean    = (gpu_sums[0] + cpu_sums[0]) / N;
-    mean_2  = (gpu_sums[1] + cpu_sums[1]) / N;
-    std_dev = sqrt((mean_2 - mean * mean) / N);
+    mean_sq  = (gpu_sums[1] + cpu_sums[1]) / N;
+    std_dev = sqrt((mean_sq - mean * mean) / N);
 
     printf("sum : %lf, mean: %lf\n", cpu_sums[0] + gpu_sums[0], mean);
     double aprx_sum, aprx_sub;

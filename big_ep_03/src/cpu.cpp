@@ -7,7 +7,7 @@
 
 using namespace std::chrono;
 
-    // result[0] = 0.5 * (sum - sqrt((sum_2 - sum * sum) / n_ops));
+    // result[0] = 0.5 * (sum - sqrt((sum_sq - sum * sum) / n_ops));
 double cpu_probing(uint64_t n_ops, int64_t M, int64_t k)
 {
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
@@ -22,28 +22,32 @@ double cpu_probing(uint64_t n_ops, int64_t M, int64_t k)
 
 void cpu_calc(std::mt19937_64 &gen,
               std::uniform_real_distribution<double> &dist, double &sum,
-              double &sum_2, uint64_t n_ops, int64_t M, int64_t k)
+              double &sum_sq, uint64_t n_ops, int64_t M, int64_t k)
 {
-#pragma omp parallel for
+    #pragma omp parallel for
     for (uint64_t i = 0; i < n_ops; i++)
     {
         double x   = dist(gen);
         double res = cpu_f(M, k, x);
+
+        #pragma omp atomic
         sum += res;
-        sum_2 += res * res;
+
+        #pragma omp atomic
+        sum_sq += res * res;
     }
 }
 
 void cpu_calc_serial(std::mt19937_64 &gen,
               std::uniform_real_distribution<double> &dist, double &sum,
-              double &sum_2, uint64_t n_ops, int64_t M, int64_t k)
+              double &sum_sq, uint64_t n_ops, int64_t M, int64_t k)
 {
     for (uint64_t i = 0; i < n_ops; i++)
     {
         double x   = dist(gen);
         double res = cpu_f(M, k, x);
         sum += res;
-        sum_2 += res * res;
+        sum_sq += res * res;
     }
 }
 
@@ -51,17 +55,17 @@ std::vector<double> cpu_integration(uint64_t n_ops, int64_t M, int64_t k, char t
 {
     std::mt19937_64 gen;
     std::uniform_real_distribution<double> dist(1e-320, 0.5 + 1e-320);
-    double sum = 0, sum_2 = 0;
+    double sum = 0, sum_sq = 0;
     switch (type){
-        case 'm': 
-            cpu_calc(gen, dist, sum, sum_2, n_ops, M, k);
+        case 'm':
+            cpu_calc(gen, dist, sum, sum_sq, n_ops, M, k);
         break;
         case 's':
-            cpu_calc_serial(gen, dist, sum, sum_2, n_ops, M, k);
+            cpu_calc_serial(gen, dist, sum, sum_sq, n_ops, M, k);
         break;
     }
     std::vector<double> result(2);
     result[0] = sum;
-    result[1] = sum_2;
+    result[1] = sum_sq;
     return result;
 }
