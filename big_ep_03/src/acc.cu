@@ -1,9 +1,11 @@
 #include "acc.cuh"
+#include "gpu.hpp"
 #include <cmath>
 #include <climits>
 #include "util.hpp"
 #include <cuda_runtime.h>
 #include <chrono>
+
 
 using namespace std::chrono;
 
@@ -72,7 +74,7 @@ __global__ void gpu_calc(curandState_t *states, double *sum, double *sum_sq,
 
     for (uint64_t i = 0; i < n_ops_thread; i++)
     {
-        x   = curand_uniform_double(&local_state) >> 1;
+        x   = curand_uniform_double(&local_state) / 2;
         res = gpu_f(M, k, x);
         block_sum[lid] += res;
         block_sum_sq[lid] += res * res;
@@ -81,7 +83,7 @@ __global__ void gpu_calc(curandState_t *states, double *sum, double *sum_sq,
     __syncthreads();
 
     // Reduction phase
-    for (int s = blockDim.x / 2 && lid < s; s > 1; s >>= 1)
+    for (int s = blockDim.x / 2; s > 1 && lid < s; s >>= 1)
     {
         block_sum[lid]   += block_sum[lid + s];
         block_sum_sq[lid] += block_sum_sq[lid + s];
@@ -98,6 +100,13 @@ __global__ void gpu_calc(curandState_t *states, double *sum, double *sum_sq,
 __host__ std::vector<double> gpu_integration(uint64_t n_ops, int64_t M,
                                              int64_t k)
 {
+
+    if (!n_ops)
+    {
+        std::vector<double> res = {0, 0};
+        return res;
+    }
+
     int block_size = 1024;
 
     // Divide the work
