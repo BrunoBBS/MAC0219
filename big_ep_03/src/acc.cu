@@ -83,7 +83,7 @@ __global__ void gpu_calc(curandState_t *states, double *sum, double *sum_sq,
     __syncthreads();
 
     // Reduction phase
-    for (int s = blockDim.x / 2; s > 1 && lid < s; s >>= 1)
+    for (int s = blockDim.x / 2; s > 0 && lid < s; s >>= 1)
     {
         block_sum[lid]   += block_sum[lid + s];
         block_sum_sq[lid] += block_sum_sq[lid + s];
