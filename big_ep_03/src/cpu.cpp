@@ -24,16 +24,16 @@ void cpu_calc(std::mt19937_64 &gen,
               std::uniform_real_distribution<double> &dist, double &sum,
               double &sum_sq, uint64_t n_ops, int64_t M, int64_t k)
 {
-#pragma omp parallel for
+    #pragma omp parallel for
     for (uint64_t i = 0; i < n_ops; i++)
     {
         double x   = dist(gen);
         double res = cpu_f(M, k, x);
 
-#pragma omp atomic update
+        #pragma omp atomic update
         sum += res;
 
-#pragma omp atomic update
+        #pragma omp atomic update
         sum_sq += res * res;
     }
 }

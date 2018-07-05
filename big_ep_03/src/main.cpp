@@ -2,10 +2,13 @@
 #include "gpu.hpp"
 #include "util.hpp"
 
+#include <chrono>
 #include <iostream>
 #include <mpi.h>
 #include <string>
+#include <thread>
 
+using namespace std::chrono;
 // Main functions of the program
 int main(int argc, char *argv[])
 {
@@ -33,38 +36,194 @@ int main(int argc, char *argv[])
 
     uint64_t N;
     int64_t k, M;
+    int int_res = 0;
 
     read(N, N_str, "N");
     read(k, k_str, "k");
     read(M, M_str, "M");
 
-    // TODO: CODE HERE
-    std::cout << cpu_probing(10000, M, k) << std::endl;
-    std::cout << gpu_probing(10000, M, k) << std::endl;
+    if (abs(k) <= abs(M) && M >= 0)
+        int_res = 1;
+    else if (abs(k) <= abs(M) && M < 0)
+        int_res = -1;
 
-    // TODO: Balance
-    uint64_t gpu_ops = floor(N * 1.0);
-    uint64_t cpu_ops = floor(N * 0.0);
-    cpu_ops += (N % 2 > 0);
+    uint64_t gpu_ops, cpu_ops;
 
-    printf("gpu: %lld cpu:%lld\n", gpu_ops, cpu_ops);
-    // Calculation
-    std::vector<double> gpu_sums = gpu_integration(gpu_ops, M, k);
-    std::vector<double> cpu_sums = cpu_integration(cpu_ops, M, k, 'm');
+    int cpu_ep_ops, gpu_ep_ops;
+    if (world_rank == 0)
+    {
+        cpu_ep_ops = cpu_probing(100000, M, k);
 
-    // Calculation of mean and standard deviation
+        printf("Caraiocpu²");
+        fflush(stdout);
+        // receive how many operations per second the gpu can do
+        MPI_Recv(&gpu_ep_ops, 1, MPI_INT, 1, 0, MPI_COMM_WORLD,
+                 MPI_STATUS_IGNORE);
+        printf("Caraiocpu³");
+        fflush(stdout);
+
+        int sum_ep_ops = cpu_ep_ops + gpu_ep_ops;
+        double alpha   = 1.1;
+
+        gpu_ops = floor(alpha * N * gpu_ep_ops / sum_ep_ops);
+        gpu_ops = (gpu_ops > N) ? N : gpu_ops;
+        cpu_ops = N - gpu_ops;
+
+        printf("N : %lld sum: %lld\n", N, cpu_ops + gpu_ops);
+        fflush(stdout);
+
+        printf("gpu: %lld \ncpu: %lld\n", gpu_ops, cpu_ops);
+        MPI_Send(&gpu_ops, 1, MPI_UNSIGNED_LONG_LONG, 1, 0, MPI_COMM_WORLD);
+    }
+    if (world_rank == 1)
+    {
+        printf("Caraio");
+        int gpu_ep_ops_loc = gpu_probing(1000000, M, k);
+        MPI_Send(&gpu_ep_ops_loc, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+    }
+
     double mean, std_dev, mean_sq;
-    mean    = (gpu_sums[0] + cpu_sums[0]) / N;
-    mean_sq = (gpu_sums[1] + cpu_sums[1]) / N;
-    std_dev = sqrt((mean_sq - mean * mean) / N);
+    double aprx_sum, aprx_sub, err_sum, err_sub;
 
-    printf("sum : %lf, mean: %lf\n", cpu_sums[0] + gpu_sums[0], mean);
-    double aprx_sum, aprx_sub;
-    aprx_sum = 2 * 0.5 * (mean + std_dev);
-    aprx_sub = 2 * 0.5 * (mean - std_dev);
+    /*********************************
+     * Balanced
+     **********************************/
 
-    printf("Approximate integral value with sum = %lf with sub = %lf \n",
-           aprx_sum, aprx_sub);
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+
+    // Calculation
+
+    double *gpu_sums;
+    std::vector<double> cpu_sums;
+
+    if (world_rank == 0)
+    {
+        cpu_sums = cpu_integration(cpu_ops, M, k, 'm');
+        gpu_sums = (double *)malloc(2 * sizeof(double));
+        MPI_Recv(gpu_sums, 2, MPI_DOUBLE, 1, 0, MPI_COMM_WORLD,
+                 MPI_STATUS_IGNORE);
+    }
+
+    if (world_rank == 1)
+    {
+        MPI_Recv(&gpu_ops, 1, MPI_UNSIGNED_LONG_LONG, 0, 0, MPI_COMM_WORLD,
+                 MPI_STATUS_IGNORE);
+
+        std::vector<double> gpu_sums_vec = gpu_integration(gpu_ops, M, k);
+
+        MPI_Send(gpu_sums_vec.data(), 2, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+    }
+
+    if (world_rank == 0)
+    {
+        // Calculation of mean and standard deviation
+        mean    = (gpu_sums[0] + cpu_sums[0]) / N;
+        mean_sq = (gpu_sums[1] + cpu_sums[1]) / N;
+        std_dev = sqrt((mean_sq - mean * mean) / N);
+
+        printf("sum : %lf, mean: %lf\n", cpu_sums[0] + gpu_sums[0], mean);
+        aprx_sum = 2 * 0.5 * (mean + std_dev);
+        aprx_sub = 2 * 0.5 * (mean - std_dev);
+        double err_sum  = int_res - aprx_sum;
+        double err_sub  = int_res - aprx_sub;
+
+        high_resolution_clock::time_point t2 = high_resolution_clock::now();
+        duration<double> dur = duration_cast<duration<double>>(t2 - t1);
+
+        printf("Tempo com balanceamento de carga em segundos: %lf \n"
+               "Erro no calculo com a soma: %lf \n"
+               "Erro no calculo com a subtracao: %lf \n\n",
+               dur, err_sum, err_sub);
+        printf("val: %lf\n", aprx_sum);
+    }
+    /*********************************
+     * Full GPU
+     **********************************/
+    // Calculation
+    if (world_rank == 1)
+    {
+        t1                           = high_resolution_clock::now();
+        std::vector<double> gpu_sums = gpu_integration(N, M, k);
+
+        // Calculation of mean and standard deviation
+        mean    = (gpu_sums[0]) / N;
+        mean_sq = (gpu_sums[1]) / N;
+        std_dev = sqrt((mean_sq - mean * mean) / N);
+
+        printf("sum : %lf, mean: %lf\n", gpu_sums[0], mean);
+        aprx_sum = 2 * 0.5 * (mean + std_dev);
+        aprx_sub = 2 * 0.5 * (mean - std_dev);
+        double err_sum  = int_res - aprx_sum;
+        double err_sub  = int_res - aprx_sub;
+
+        high_resolution_clock::time_point t2 = high_resolution_clock::now();
+        duration<double> dur = duration_cast<duration<double>>(t2 - t1);
+
+        printf("Tempo na GPU com uma thread na CPU em segundos: %lf \n"
+               "Erro no calculo com a soma: %lf \n"
+               "Erro no calculo com a subtracao: %lf \n\n",
+               dur, err_sum, err_sub);
+        printf("val: %lf\n", aprx_sum);
+    }
+    /*********************************
+     * CPU Multithreaded
+     **********************************/
+    // Calculation
+    if (world_rank == 0)
+    {
+        t1       = high_resolution_clock::now();
+        cpu_sums = cpu_integration(N, M, k, 'm');
+
+        // Calculation of mean and standard deviation
+        mean    = (cpu_sums[0]) / N;
+        mean_sq = (cpu_sums[1]) / N;
+        std_dev = sqrt((mean_sq - mean * mean) / N);
+
+        printf("sum : %lf, mean: %lf\n", cpu_sums[0], mean);
+        aprx_sum = 2 * 0.5 * (mean + std_dev);
+        aprx_sub = 2 * 0.5 * (mean - std_dev);
+        double err_sum  = int_res - aprx_sum;
+        double err_sub  = int_res - aprx_sub;
+
+        high_resolution_clock::time_point t2 = high_resolution_clock::now();
+        duration<double> dur = duration_cast<duration<double>>(t2 - t1);
+
+        printf("Tempo na CPU com %d threads em segundos: %lf \n"
+               "Erro no calculo com a soma: %lf \n"
+               "Erro no calculo com a subtracao: %lf \n\n",
+               std::thread::hardware_concurrency() / 2, dur, err_sum,
+               err_sub);
+        printf("val: %lf\n", aprx_sum);
+    }
+    /*********************************
+     * CPU Singlethreaded (Sequential)
+     **********************************/
+    // Calculation
+    if (world_rank == 0)
+    {
+        t1       = high_resolution_clock::now();
+        cpu_sums = cpu_integration(N, M, k, 's');
+
+        // Calculation of mean and standard deviation
+        mean    = (cpu_sums[0]) / N;
+        mean_sq = (cpu_sums[1]) / N;
+        std_dev = sqrt((mean_sq - mean * mean) / N);
+
+        printf("sum : %lf, mean: %lf\n", cpu_sums[0], mean);
+        aprx_sum = 2 * 0.5 * (mean + std_dev);
+        aprx_sub = 2 * 0.5 * (mean - std_dev);
+        double err_sum  = int_res - aprx_sum;
+        double err_sub  = int_res - aprx_sub;
+
+        high_resolution_clock::time_point t2 = high_resolution_clock::now();
+        duration<double> dur = duration_cast<duration<double>>(t2 - t1);
+
+        printf("Tempo sequencial em segundos: %lf \n"
+               "Erro no calculo com a soma: %lf \n"
+               "Erro no calculo com a subtracao: %lf \n\n",
+               dur, err_sum, err_sub);
+        printf("val: %lf\n", aprx_sum);
+    }
 
     // Finalize the MPI environment.
     MPI_Finalize();
