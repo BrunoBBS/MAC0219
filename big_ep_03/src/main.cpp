@@ -69,7 +69,6 @@ int main(int argc, char *argv[])
     }
     if (world_rank == 0)
     {
-        printf("Caraio");
         int gpu_ep_ops_loc = gpu_probing(1000000, M, k);
         MPI_Send(&gpu_ep_ops_loc, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
     }
@@ -113,7 +112,6 @@ int main(int argc, char *argv[])
         mean_sq = (gpu_sums[1] + cpu_sums[1]) / N;
         std_dev = sqrt((mean_sq - mean * mean) / N);
 
-        printf("sum : %lf, mean: %lf\n", cpu_sums[0] + gpu_sums[0], mean);
         aprx_sum = 2 * 0.5 * (mean + std_dev);
         aprx_sub = 2 * 0.5 * (mean - std_dev);
         double err_sum  = int_res - aprx_sum;
@@ -126,7 +124,6 @@ int main(int argc, char *argv[])
                "Erro no calculo com a soma: %lf \n"
                "Erro no calculo com a subtracao: %lf \n\n",
                dur, err_sum, err_sub);
-        printf("val: %lf\n", aprx_sum);
     }
     /*********************************
      * Full GPU
@@ -142,7 +139,6 @@ int main(int argc, char *argv[])
         mean_sq = (gpu_sums[1]) / N;
         std_dev = sqrt((mean_sq - mean * mean) / N);
 
-        printf("sum : %lf, mean: %lf\n", gpu_sums[0], mean);
         aprx_sum = 2 * 0.5 * (mean + std_dev);
         aprx_sub = 2 * 0.5 * (mean - std_dev);
         double err_sum  = int_res - aprx_sum;
@@ -155,7 +151,6 @@ int main(int argc, char *argv[])
                "Erro no calculo com a soma: %lf \n"
                "Erro no calculo com a subtracao: %lf \n\n",
                dur, err_sum, err_sub);
-        printf("val: %lf\n", aprx_sum);
     }
     /*********************************
      * CPU Multithreaded
@@ -171,7 +166,6 @@ int main(int argc, char *argv[])
         mean_sq = (cpu_sums[1]) / N;
         std_dev = sqrt((mean_sq - mean * mean) / N);
 
-        printf("sum : %lf, mean: %lf\n", cpu_sums[0], mean);
         aprx_sum = 2 * 0.5 * (mean + std_dev);
         aprx_sub = 2 * 0.5 * (mean - std_dev);
         double err_sum  = int_res - aprx_sum;
@@ -185,7 +179,6 @@ int main(int argc, char *argv[])
                "Erro no calculo com a subtracao: %lf \n\n",
                std::thread::hardware_concurrency() / 2, dur, err_sum,
                err_sub);
-        printf("val: %lf\n", aprx_sum);
     }
     /*********************************
      * CPU Singlethreaded (Sequential)
@@ -201,7 +194,6 @@ int main(int argc, char *argv[])
         mean_sq = (cpu_sums[1]) / N;
         std_dev = sqrt((mean_sq - mean * mean) / N);
 
-        printf("sum : %lf, mean: %lf\n", cpu_sums[0], mean);
         aprx_sum = 2 * 0.5 * (mean + std_dev);
         aprx_sub = 2 * 0.5 * (mean - std_dev);
         double err_sum  = int_res - aprx_sum;
@@ -214,7 +206,6 @@ int main(int argc, char *argv[])
                "Erro no calculo com a soma: %lf \n"
                "Erro no calculo com a subtracao: %lf \n\n",
                dur, err_sum, err_sub);
-        printf("val: %lf\n", aprx_sum);
     }
 
     // Finalize the MPI environment.
