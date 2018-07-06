@@ -50,17 +50,13 @@ int main(int argc, char *argv[])
     uint64_t gpu_ops, cpu_ops;
 
     int cpu_ep_ops, gpu_ep_ops;
-    if (world_rank == 0)
+    if (world_rank == 1)
     {
         cpu_ep_ops = cpu_probing(100000, M, k);
 
-        printf("Caraiocpu²");
-        fflush(stdout);
         // receive how many operations per second the gpu can do
         MPI_Recv(&gpu_ep_ops, 1, MPI_INT, 1, 0, MPI_COMM_WORLD,
                  MPI_STATUS_IGNORE);
-        printf("Caraiocpu³");
-        fflush(stdout);
 
         int sum_ep_ops = cpu_ep_ops + gpu_ep_ops;
         double alpha   = 1.1;
@@ -69,13 +65,9 @@ int main(int argc, char *argv[])
         gpu_ops = (gpu_ops > N) ? N : gpu_ops;
         cpu_ops = N - gpu_ops;
 
-        printf("N : %lld sum: %lld\n", N, cpu_ops + gpu_ops);
-        fflush(stdout);
-
-        printf("gpu: %lld \ncpu: %lld\n", gpu_ops, cpu_ops);
         MPI_Send(&gpu_ops, 1, MPI_UNSIGNED_LONG_LONG, 1, 0, MPI_COMM_WORLD);
     }
-    if (world_rank == 1)
+    if (world_rank == 0)
     {
         printf("Caraio");
         int gpu_ep_ops_loc = gpu_probing(1000000, M, k);
@@ -96,7 +88,7 @@ int main(int argc, char *argv[])
     double *gpu_sums;
     std::vector<double> cpu_sums;
 
-    if (world_rank == 0)
+    if (world_rank == 1)
     {
         cpu_sums = cpu_integration(cpu_ops, M, k, 'm');
         gpu_sums = (double *)malloc(2 * sizeof(double));
@@ -104,7 +96,7 @@ int main(int argc, char *argv[])
                  MPI_STATUS_IGNORE);
     }
 
-    if (world_rank == 1)
+    if (world_rank == 0)
     {
         MPI_Recv(&gpu_ops, 1, MPI_UNSIGNED_LONG_LONG, 0, 0, MPI_COMM_WORLD,
                  MPI_STATUS_IGNORE);
@@ -114,7 +106,7 @@ int main(int argc, char *argv[])
         MPI_Send(gpu_sums_vec.data(), 2, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
     }
 
-    if (world_rank == 0)
+    if (world_rank == 1)
     {
         // Calculation of mean and standard deviation
         mean    = (gpu_sums[0] + cpu_sums[0]) / N;
@@ -140,7 +132,7 @@ int main(int argc, char *argv[])
      * Full GPU
      **********************************/
     // Calculation
-    if (world_rank == 1)
+    if (world_rank == 0)
     {
         t1                           = high_resolution_clock::now();
         std::vector<double> gpu_sums = gpu_integration(N, M, k);
@@ -169,7 +161,7 @@ int main(int argc, char *argv[])
      * CPU Multithreaded
      **********************************/
     // Calculation
-    if (world_rank == 0)
+    if (world_rank == 1)
     {
         t1       = high_resolution_clock::now();
         cpu_sums = cpu_integration(N, M, k, 'm');
@@ -199,7 +191,7 @@ int main(int argc, char *argv[])
      * CPU Singlethreaded (Sequential)
      **********************************/
     // Calculation
-    if (world_rank == 0)
+    if (world_rank == 1)
     {
         t1       = high_resolution_clock::now();
         cpu_sums = cpu_integration(N, M, k, 's');
