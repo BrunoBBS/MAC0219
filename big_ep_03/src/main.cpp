@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         cpu_ep_ops = cpu_probing(100000, M, k);
 
         // receive how many operations per second the gpu can do
-        MPI_Recv(&gpu_ep_ops, 1, MPI_INT, 1, 0, MPI_COMM_WORLD,
+        MPI_Recv(&gpu_ep_ops, 1, MPI_INT, 0, 0, MPI_COMM_WORLD,
                  MPI_STATUS_IGNORE);
 
         int sum_ep_ops = cpu_ep_ops + gpu_ep_ops;
@@ -65,12 +65,12 @@ int main(int argc, char *argv[])
         gpu_ops = (gpu_ops > N) ? N : gpu_ops;
         cpu_ops = N - gpu_ops;
 
-        MPI_Send(&gpu_ops, 1, MPI_UNSIGNED_LONG_LONG, 1, 0, MPI_COMM_WORLD);
+        MPI_Send(&gpu_ops, 1, MPI_UNSIGNED_LONG_LONG, 0, 0, MPI_COMM_WORLD);
     }
     if (world_rank == 0)
     {
         int gpu_ep_ops_loc = gpu_probing(1000000, M, k);
-        MPI_Send(&gpu_ep_ops_loc, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        MPI_Send(&gpu_ep_ops_loc, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);
     }
 
     double mean, std_dev, mean_sq;
@@ -91,18 +91,18 @@ int main(int argc, char *argv[])
     {
         cpu_sums = cpu_integration(cpu_ops, M, k, 'm');
         gpu_sums = (double *)malloc(2 * sizeof(double));
-        MPI_Recv(gpu_sums, 2, MPI_DOUBLE, 1, 0, MPI_COMM_WORLD,
+        MPI_Recv(gpu_sums, 2, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD,
                  MPI_STATUS_IGNORE);
     }
 
     if (world_rank == 0)
     {
-        MPI_Recv(&gpu_ops, 1, MPI_UNSIGNED_LONG_LONG, 0, 0, MPI_COMM_WORLD,
+        MPI_Recv(&gpu_ops, 1, MPI_UNSIGNED_LONG_LONG, 1, 0, MPI_COMM_WORLD,
                  MPI_STATUS_IGNORE);
 
         std::vector<double> gpu_sums_vec = gpu_integration(gpu_ops, M, k);
 
-        MPI_Send(gpu_sums_vec.data(), 2, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+        MPI_Send(gpu_sums_vec.data(), 2, MPI_DOUBLE, 1, 0, MPI_COMM_WORLD);
     }
 
     if (world_rank == 1)
